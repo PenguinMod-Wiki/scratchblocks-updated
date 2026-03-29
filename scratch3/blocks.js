@@ -119,7 +119,7 @@ export class IconView {
     let x = (this.width - this.naturalWidth) / 2
     let y = (this.height - this.naturalHeight) / 2
     if (isURI(this.name)) {
-      y = y + 2;
+      y = y + 2
       return SVG.el("image", {
         href: this.name,
         width: this.naturalWidth,
