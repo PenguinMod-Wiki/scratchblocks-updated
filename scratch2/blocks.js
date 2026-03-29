@@ -265,9 +265,10 @@ class BlockView {
         child.measure()
       }
     }
-    if (this.comment) {
+    if (this.comment && !this.comment.skipDisplay) {
       this.comment.measure()
     }
+
   }
 
   static get shapes() {
@@ -652,7 +653,7 @@ class ScriptView {
       y += block.height
 
       const comment = block.comment
-      if (comment) {
+      if (comment && !comment.skipDisplay) {
         const line = block.firstLine
         const cx = block.innerWidth + 2 + CommentView.lineLength
         const cy = y - block.height + line.height / 2
@@ -660,6 +661,7 @@ class ScriptView {
         children.push(SVG.move(cx, cy - comment.height / 2, el))
         this.width = Math.max(this.width, cx + comment.width)
       }
+
     }
     this.height = y
     if (!inside && !this.isFinal) {

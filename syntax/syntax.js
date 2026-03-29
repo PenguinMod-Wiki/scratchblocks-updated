@@ -26,7 +26,9 @@ import {
   rtlLanguages,
   iconPat,
   blockName,
+  blocksById,
 } from "./blocks.js"
+
 
 function paintBlock(info, children, languages) {
   let overrides = []
@@ -571,16 +573,23 @@ function parseLines(code, languages, options) {
   function pComment(end) {
     next()
     next()
-    let comment = ""
+    let commentText = ""
     while (tok && tok !== "\n" && tok !== end) {
-      comment += tok
+      commentText += tok
       next()
+    }
+    const comment = new Comment(commentText, true)
+    const m = commentText.match(/^\s*@opcode:"([^"]*)"/)
+    if (m) {
+      comment.opcode = m[1]
+      comment.skipDisplay = true
     }
     if (tok && tok === "\n") {
       next()
     }
-    return new Comment(comment, true)
+    return comment
   }
+
 
   function pLine() {
     let diff
@@ -596,7 +605,22 @@ function parseLines(code, languages, options) {
         return comment
       }
       block.comment = comment
+
+      if (comment.opcode && block.info.category === "obsolete") {
+        const type = blocksById[comment.opcode]
+        if (type) {
+          Object.assign(block.info, {
+            id: type.id,
+            category: type.category,
+            shape: type.shape,
+            selector: type.selector,
+            hasLoopArrow: type.hasLoopArrow,
+            categoryIsDefault: true,
+          })
+        }
+      }
     }
+
     if (block) {
       block.diff = diff
     }

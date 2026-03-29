@@ -333,7 +333,9 @@ export class Comment {
     this.label = new Label(value, "comment-label")
     this.width = null
     this.hasBlock = hasBlock
+    this.skipDisplay = false
   }
+
   get isComment() {
     return true
   }
