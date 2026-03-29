@@ -400,9 +400,16 @@ class BlockView {
   drawSelf(iconStyle, w, h, lines) {
     // mouths
     if (lines.length > 1) {
-      return SVG.mouthRect(w, h, this.isFinal, lines, {
-        class: `sb3-${this.info.category}`,
-      }, this.info.shape)
+      return SVG.mouthRect(
+        w,
+        h,
+        this.isFinal,
+        lines,
+        {
+          class: `sb3-${this.info.category}`,
+        },
+        this.info.shape,
+      )
     }
 
     // outlines
@@ -552,7 +559,10 @@ class BlockView {
       const child = children[i]
       child.el = child.draw(iconStyle, this)
 
-      if (child.isScript && (this.isCommand || this.isReporter || this.isBoolean)) {
+      if (
+        child.isScript &&
+        (this.isCommand || this.isReporter || this.isBoolean)
+      ) {
         this.hasScript = true
         pushLine()
         child.y = y - 1
