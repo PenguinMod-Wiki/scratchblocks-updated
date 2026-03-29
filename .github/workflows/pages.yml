@@ -1,0 +1,53 @@
+name: GitHub page
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run:
+    build:
+      name: Build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            ref: ${{ github.ref }}
+            token: ${{ github.token }}
+
+        - name: Setup Node.JS
+          uses: actions/setup-node@v4
+          with:
+            node-version: 22
+            cache: "npm"
+
+        - name: Install dependencies
+          run: npm ci
+
+        - name: Minify file
+          run: npm run build
+
+        - name: Upload work as artifact
+          uses: actions/upload-pages-artifact@v3
+          with: 
+            path: .
+
+    deploy:
+      name: Deploy site
+      needs: build
+
+      permissions:
+        pages: write
+        id-token: write
+      
+      environment:
+        name: github-pages@v4
+        url: ${{ steps.deployment.outputs.page_url }}
+
+      runs-on: ubuntu-latest
+      steps:
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages
