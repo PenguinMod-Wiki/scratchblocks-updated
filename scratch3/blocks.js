@@ -367,7 +367,6 @@ class BlockView {
     if (this.comment && !this.comment.skipDisplay) {
       this.comment.measure()
     }
-
   }
 
   static get shapes() {
@@ -814,7 +813,6 @@ class ScriptView {
 
       const comment = block.comment
       if (comment && !comment.skipDisplay) {
-
         const line = block.firstLine
         const cx = block.innerWidth + 2 + CommentView.lineLength
         const cy = y - block.height + line.height / 2
