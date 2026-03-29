@@ -53,6 +53,7 @@ svg${name} .sb3-${category}-alt {
 }
 svg${name} .sb3-${category}-dark {
   fill: ${style[category + "Tertiary"]};
+  stroke: ${style[category + "Tertiary"]};
 }
 `
 
@@ -92,11 +93,8 @@ svg${name} .sb3-custom-arg {
   fill: ${style.customPrimary};
   stroke: ${style.customTertiary};
 }
-
-svg${name} .sb3-extension-line {
-  stroke: ${style.extensionSecondary};
-}
 `
+
 
 const originalStyle = {
   label: "#fff",

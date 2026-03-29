@@ -40,7 +40,7 @@ import scratchCommands from "./commands.js"
 const inputNumberPat = /%([0-9]+)/
 export const inputPat = /(%[a-zA-Z0-9](?:\.[a-zA-Z0-9]+)?)/
 const inputPatGlobal = new RegExp(inputPat.source, "g")
-export const iconPat = /(@[a-zA-Z]+)/
+export const iconPat = /(@(?:[a-zA-Z0-9_-]+|\([^)]+\)))/
 const splitPat = new RegExp(`${inputPat.source}|${iconPat.source}| +`, "g")
 
 export const hexColorPat = /^#(?:[0-9a-fA-F]{3}){1,2}?$/

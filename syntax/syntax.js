@@ -52,7 +52,21 @@ function paintBlock(info, children, languages) {
   let lang
   let type
   if (!overrides.includes("reset")) {
-    const o = lookupHash(shortHash, info, children, languages)
+    let o = lookupHash(shortHash, info, children, languages)
+    if (!o) {
+      // Fallback: try matching without icons.
+      const cleaningWords = []
+      for (const child of children) {
+        if (child.isLabel) {
+          cleaningWords.push(child.value)
+        } else if (!child.isIcon) {
+          cleaningWords.push("_")
+        }
+      }
+      const cleanHash = minifyHash(cleaningWords.join(" "))
+      o = lookupHash(cleanHash, info, children, languages)
+    }
+
     if (o) {
       lang = o.lang
       type = o.type
@@ -201,7 +215,7 @@ function isDefineBlock(children, lang) {
   return true
 }
 
-function parseLines(code, languages) {
+function parseLines(code, languages, options) {
   let tok = code[0]
   let index = 0
   function next() {
@@ -301,15 +315,30 @@ function parseLines(code, languages) {
         case "@": {
           next()
           let name = ""
-          while (tok && /[a-zA-Z]/.test(tok)) {
-            name += tok
+          if (tok === "(") {
             next()
+            while (tok && tok !== ")") {
+              name += tok
+              next()
+            }
+            if (tok === ")") {
+              next()
+            }
+          } else {
+            while (tok && /[a-zA-Z0-9_-]/.test(tok)) {
+              name += tok
+              next()
+            }
           }
+
           if (name === "cloud") {
             children.push(new Label("☁"))
           } else {
             children.push(
-              Object.prototype.hasOwnProperty.call(Icon.icons, name)
+              Object.prototype.hasOwnProperty.call(Icon.icons, name) ||
+              (options.icons &&
+                Object.prototype.hasOwnProperty.call(options.icons, name)) ||
+              name.startsWith("data:")
                 ? new Icon(name)
                 : new Label(`@${name}`),
             )
@@ -888,7 +917,7 @@ export function parse(code, options) {
 
   /* * */
 
-  const f = parseLines(code, languages)
+  const f = parseLines(code, languages, options)
   const scripts = parseScripts(f)
   recogniseStuff(scripts)
   return new Document(scripts)

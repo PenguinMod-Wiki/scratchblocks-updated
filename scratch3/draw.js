@@ -6,6 +6,7 @@ let xml
 
 const directProps = {
   textContent: true,
+  innerHTML: true,
 }
 
 export default class SVG {
@@ -77,9 +78,10 @@ export default class SVG {
     return text
   }
 
-  static symbol(href) {
+  static symbol(href, props) {
     return SVG.el("use", {
       href: href,
+      ...props,
     })
   }
 

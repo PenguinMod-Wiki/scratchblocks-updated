@@ -84,14 +84,22 @@ LabelView.metricsCache = {}
 LabelView.toMeasure = []
 
 class IconView {
-  constructor(icon) {
+  constructor(icon, options) {
     Object.assign(this, icon)
 
-    const info = IconView.icons[this.name]
+    const info = IconView.icons[this.name] || (options.icons && options.icons[this.name])
     if (!info) {
+      if (this.name.startsWith("data:")) {
+        Object.assign(this, { width: 14, height: 11 })
+        return
+      }
       throw new Error(`no info for icon: ${this.name}`)
     }
-    Object.assign(this, info)
+    if (typeof info === "string") {
+      Object.assign(this, { width: 14, height: 11 })
+    } else {
+      Object.assign(this, info)
+    }
   }
 
   get isIcon() {
@@ -99,6 +107,13 @@ class IconView {
   }
 
   draw() {
+    if (this.name.startsWith("data:")) {
+      return SVG.el("image", {
+        href: this.name,
+        width: this.width,
+        height: this.height,
+      })
+    }
     return SVG.symbol(`#${this.name}`, {
       width: this.width,
       height: this.height,
@@ -120,10 +135,10 @@ class IconView {
 }
 
 class InputView {
-  constructor(input) {
+  constructor(input, options) {
     Object.assign(this, input)
     if (input.label) {
-      this.label = newView(input.label)
+      this.label = newView(input.label, options)
     }
 
     this.x = 0
@@ -211,10 +226,10 @@ class InputView {
 }
 
 class BlockView {
-  constructor(block) {
+  constructor(block, options) {
     Object.assign(this, block)
-    this.children = block.children.map(newView)
-    this.comment = this.comment ? newView(this.comment) : null
+    this.children = block.children.map(node => newView(node, options))
+    this.comment = this.comment ? newView(this.comment, options) : null
 
     if (
       Object.prototype.hasOwnProperty.call(aliasExtensions, this.info.category)
@@ -508,9 +523,9 @@ class BlockView {
 }
 
 class CommentView {
-  constructor(comment) {
+  constructor(comment, options) {
     Object.assign(this, comment)
-    this.label = newView(comment.label)
+    this.label = newView(comment.label, options)
 
     this.width = null
   }
@@ -546,9 +561,9 @@ class CommentView {
 }
 
 class GlowView {
-  constructor(glow) {
+  constructor(glow, options) {
     Object.assign(this, glow)
-    this.child = newView(glow.child)
+    this.child = newView(glow.child, options)
 
     this.width = null
     this.height = null
@@ -598,9 +613,9 @@ class GlowView {
 }
 
 class ScriptView {
-  constructor(script) {
+  constructor(script, options) {
     Object.assign(this, script)
-    this.blocks = script.blocks.map(newView)
+    this.blocks = script.blocks.map(node => newView(node, options))
 
     this.y = 0
   }
@@ -660,13 +675,14 @@ class ScriptView {
 class DocumentView {
   constructor(doc, options) {
     Object.assign(this, doc)
-    this.scripts = doc.scripts.map(newView)
+    this.scripts = doc.scripts.map(node => newView(node, options))
 
     this.width = null
     this.height = null
     this.el = null
     this.defs = null
     this.scale = options.scale
+    this.customIcons = options.icons || {}
   }
 
   measure() {
@@ -706,6 +722,24 @@ class DocumentView {
         bevelFilter("inputBevelFilter", true),
         darkFilter("inputDarkFilter"),
         ...makeIcons(),
+        ...Object.keys(this.customIcons).map(name => {
+          const icon = this.customIcons[name]
+          const props = {
+            id: name,
+            width: 14,
+            height: 11,
+          }
+          if (icon.trim().startsWith("<svg") || icon.trim().startsWith("<g")) {
+            return SVG.el("g", {
+              ...props,
+              innerHTML: icon,
+            })
+          }
+          return SVG.el("image", {
+            ...props,
+            href: icon,
+          })
+        }),
       ])),
     )
 

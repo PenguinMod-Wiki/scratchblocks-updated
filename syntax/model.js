@@ -50,7 +50,7 @@ export class Icon {
     this.name = name
     this.isArrow = name === "loopArrow"
 
-    assert(Icon.icons[name], `no info for icon ${name}`)
+    // assert(Icon.icons[name], `no info for icon ${name}`)
   }
   get isIcon() {
     return true
@@ -70,7 +70,10 @@ export class Icon {
   }
 
   stringify() {
-    return unicodeIcons[`@${this.name}`] || ""
+    if (this.name.startsWith("data:")) {
+      return `@(${this.name})`
+    }
+    return unicodeIcons[`@${this.name}`] || `@${this.name}`
   }
 }
 

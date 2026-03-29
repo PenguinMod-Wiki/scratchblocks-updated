@@ -83,9 +83,10 @@ export default class SVG {
     return text
   }
 
-  static symbol(href) {
+  static symbol(href, props) {
     return SVG.el("use", {
       href: href,
+      ...props,
     })
   }
 

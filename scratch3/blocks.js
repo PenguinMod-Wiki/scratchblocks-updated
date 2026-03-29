@@ -77,14 +77,27 @@ LabelView.metricsCache = {}
 LabelView.toMeasure = []
 
 export class IconView {
-  constructor(icon) {
+  constructor(icon, options, isExtension) {
     Object.assign(this, icon)
 
-    const info = IconView.icons[this.name]
+    const info = IconView.icons[this.name] || (options.icons && options.icons[this.name])
     if (!info) {
+      if (this.name.startsWith("data:")) {
+        Object.assign(this, {
+          width: isExtension ? 40 : 24,
+          height: isExtension ? 40 : 24,
+          isDataIcon: true,
+          isExtensionIcon: !!isExtension
+        })
+        return
+      }
       throw new Error(`no info for icon: ${this.name}`)
     }
-    Object.assign(this, info)
+    if (typeof info === "string") {
+      Object.assign(this, { width: 24, height: 24 })
+    } else {
+      Object.assign(this, info)
+    }
   }
 
   get isIcon() {
@@ -92,6 +105,16 @@ export class IconView {
   }
 
   draw(iconStyle) {
+    if (this.name.startsWith("data:")) {
+      let isExt = this.isExtensionIcon
+      return SVG.el("image", {
+        href: this.name,
+        width: isExt ? 24 : this.width,
+        height: isExt ? 24 : this.height,
+        x: isExt ? 12 : 0,
+        y: isExt ? 12 : 0,
+      })
+    }
     return SVG.symbol(`#sb3-${iconName(this.name, iconStyle)}`, {
       width: this.width,
       height: this.height,
@@ -139,22 +162,27 @@ export class LineView {
 
   draw(_iconStyle, parent) {
     const category = parent.info.category
-    return SVG.el("line", {
-      class: `sb3-extension-line`,
+    const props = {
+      class: `sb3-extension-line sb3-${category}-dark`,
+      stroke: "rgba(0, 0, 0, 0.15)", // Fallback if CSS doesn't set stroke
       "stroke-linecap": "round",
       x1: 0,
-      y1: 0,
+      y1: 4,
       x2: 0,
-      y2: 40,
-    })
+      y2: 36,
+    }
+    if (parent.info.color) {
+      props.stroke = "rgba(0, 0, 0, 0.2)"
+    }
+    return SVG.el("line", props)
   }
 }
 
 export class InputView {
-  constructor(input) {
+  constructor(input, options) {
     Object.assign(this, input)
     if (input.label) {
-      this.label = newView(input.label)
+      this.label = newView(input.label, options)
     }
     this.isBoolean = this.shape === "boolean"
     this.isDropdown = this.shape === "dropdown"
@@ -278,14 +306,30 @@ export class InputView {
 }
 
 class BlockView {
-  constructor(block) {
+  constructor(block, options) {
     Object.assign(this, block)
-    this.children = block.children.map(newView)
-    this.comment = this.comment ? newView(this.comment) : null
+
+    this.comment = this.comment ? newView(this.comment, options) : null
     this.isRound = this.isReporter
 
     // Avoid accidental mutation
     this.info = { ...block.info }
+
+    this.children = block.children.map((node, i) => {
+      // If it's the first icon in a stack/hat block, it's an extension icon
+      const isExt = i === 0 && node instanceof Icon && (this.info.shape === "stack" || this.info.shape === "hat")
+      return newView(node, { ...options, isExtensionIcon: isExt })
+    })
+
+    if (
+      this.children[0] &&
+      this.children[0].isIcon &&
+      !this.children[1]?.isLine &&
+      (this.info.shape === "stack" || this.info.shape === "hat")
+    ) {
+      this.children.splice(1, 0, new LineView())
+    }
+
     if (
       Object.prototype.hasOwnProperty.call(aliasExtensions, this.info.category)
     ) {
@@ -294,7 +338,7 @@ class BlockView {
     if (Object.prototype.hasOwnProperty.call(extensions, this.info.category)) {
       this.children.unshift(new LineView())
       this.children.unshift(
-        new IconView({ name: this.info.category + "Block" }),
+        new IconView({ name: this.info.category + "Block" }, options),
       )
       this.info.category = "extension"
     }
@@ -383,6 +427,9 @@ class BlockView {
   }
 
   horizontalPadding(child) {
+    if (this.children[0] === child && child.isIcon && (this.info.shape === "stack" || this.info.shape === "hat")) {
+      return 0
+    }
     if (this.isRound) {
       if (child.isIcon) {
         return 16
@@ -414,6 +461,12 @@ class BlockView {
   }
 
   marginBetween(a, b) {
+    if (a.isIcon && b.isLine) {
+      return 0
+    }
+    if (a.isLine) {
+      return 8
+    }
     // Consecutive labels should be rendered as a single text element.
     // For now, manually offset by the size of one space
     if (a.isLabel && b.isLabel) {
@@ -519,7 +572,7 @@ class BlockView {
         }
 
         // Align extension category icons below notch
-        if (child.isIcon && i === 0 && this.isCommand) {
+        if (child.isIcon && i === 0 && this.isCommand && !child.isDataIcon) {
           line.height = Math.max(line.height, child.height + 8)
         }
 
@@ -595,7 +648,7 @@ class BlockView {
           y += 3
         } else if (child.isIcon) {
           y += child.dy | 0
-          if (this.isCommand && i === 0 && j === 0) {
+          if (this.isCommand && i === 0 && j === 0 && !child.isDataIcon) {
             y += 4
           }
         }
@@ -623,9 +676,9 @@ class BlockView {
 }
 
 export class CommentView {
-  constructor(comment) {
+  constructor(comment, options) {
     Object.assign(this, comment)
-    this.label = newView(comment.label)
+    this.label = newView(comment.label, options)
 
     this.width = null
   }
@@ -661,9 +714,9 @@ export class CommentView {
 }
 
 class GlowView {
-  constructor(glow) {
+  constructor(glow, options) {
     Object.assign(this, glow)
-    this.child = newView(glow.child)
+    this.child = newView(glow.child, options)
 
     this.width = null
     this.height = null
@@ -713,9 +766,9 @@ class GlowView {
 }
 
 class ScriptView {
-  constructor(script) {
+  constructor(script, options) {
     Object.assign(this, script)
-    this.blocks = script.blocks.map(newView)
+    this.blocks = script.blocks.map(node => newView(node, options))
 
     this.y = 0
   }
@@ -775,7 +828,7 @@ class ScriptView {
 class DocumentView {
   constructor(doc, options) {
     Object.assign(this, doc)
-    this.scripts = doc.scripts.map(newView)
+    this.scripts = doc.scripts.map(node => newView(node, options))
 
     this.width = null
     this.height = null
@@ -783,6 +836,7 @@ class DocumentView {
     this.defs = null
     this.scale = options.scale
     this.iconStyle = options.style.replace("scratch3-", "")
+    this.customIcons = options.icons || {}
   }
 
   measure() {
@@ -826,7 +880,39 @@ class DocumentView {
       this.iconStyle === "high-contrast"
         ? makeHighContrastIcons()
         : makeOriginalIcons()
-    svg.appendChild((this.defs = SVG.withChildren(SVG.el("defs"), icons)))
+
+    const iconElements = [...icons]
+    Object.keys(this.customIcons).forEach(name => {
+      const icon = this.customIcons[name]
+      const props = {
+        id: `sb3-${name}`,
+        width: 24,
+        height: 24,
+      }
+      if (icon.trim().startsWith("<svg") || icon.trim().startsWith("<g")) {
+        // SVG code
+        // We can't easily parse SVG here without a DOM or complex regex.
+        // Assuming SVG.el can handle raw SVG if we wrap it?
+        // Actually, SVG.el is for creating single elements.
+        // Let's use a better approach: create a symbol and use innerHTML if available
+        // but this is a browser/server library.
+        // scratchblocks usually uses SVG.el and SVG.setProps.
+        // For raw SVG, we might need a different tag or just trust it.
+        //
+        // Wait, the specification says SVG code or image link.
+        iconElements.push(SVG.el("g", {
+          ...props,
+          innerHTML: icon, // browser-only
+        }))
+      } else {
+        // Image link / data URL
+        iconElements.push(SVG.el("image", {
+          ...props,
+          href: icon,
+        }))
+      }
+    })
+    svg.appendChild((this.defs = SVG.withChildren(SVG.el("defs"), iconElements)))
 
     svg.appendChild(
       SVG.setProps(SVG.group(elements), {
@@ -912,4 +998,10 @@ const viewFor = node => {
   }
 }
 
-export const newView = (node, options) => new (viewFor(node))(node, options)
+export const newView = (node, options) => {
+  const View = viewFor(node)
+  if (View === IconView) {
+    return new View(node, options, options?.isExtensionIcon)
+  }
+  return new View(node, options)
+}

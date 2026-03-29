@@ -77,5 +77,8 @@
   },
   "jest": {
     "transform": {}
+  },
+  "dependencies": {
+    "install": "^0.13.0"
   }
 }
