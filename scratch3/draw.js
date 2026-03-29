@@ -161,7 +161,7 @@ export default class SVG {
     }
 
     if ((shape === "reporter" || shape === "boolean") && inset === 0) {
-      hasNotch = false;
+      hasNotch = false
     }
 
     let arr = [`L ${w} ${y - 4}`, `a 4 4 0 0 1 -4 4`]
@@ -299,7 +299,10 @@ export default class SVG {
 
   static mouthRect(w, h, isFinal, lines, props, shape) {
     let y = lines[0].height
-    const p = [SVG.getTop(w, shape), SVG.getRightAndBottom(w, y, true, 16, shape)]
+    const p = [
+      SVG.getTop(w, shape),
+      SVG.getRightAndBottom(w, y, true, 16, shape),
+    ]
     for (let i = 1; i < lines.length; i += 2) {
       const isLast = i + 2 === lines.length
 
