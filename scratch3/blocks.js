@@ -159,7 +159,7 @@ export class LineView {
     return true
   }
 
-  measure() { }
+  measure() {}
 
   draw(_iconStyle, parent) {
     const category = parent.info.category
@@ -245,8 +245,9 @@ export class InputView {
 
     const el = InputView.shapes[this.shape](w, h)
     SVG.setProps(el, {
-      class: `${this.isColor ? "" : `sb3-${parent.info.category}`
-        } sb3-input sb3-input-${this.shape}`,
+      class: `${
+        this.isColor ? "" : `sb3-${parent.info.category}`
+      } sb3-input sb3-input-${this.shape}`,
     })
 
     if (this.isColor) {
