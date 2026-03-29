@@ -1,6 +1,10 @@
 name: Format code
 on: [push, pull_request]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   run:
     name: Format code
