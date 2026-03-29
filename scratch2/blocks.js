@@ -87,7 +87,8 @@ class IconView {
   constructor(icon, options) {
     Object.assign(this, icon)
 
-    const info = IconView.icons[this.name] || (options.icons && options.icons[this.name])
+    const info =
+      IconView.icons[this.name] || (options.icons && options.icons[this.name])
     if (!info) {
       if (this.name.startsWith("data:")) {
         Object.assign(this, { width: 14, height: 11 })

@@ -80,14 +80,15 @@ export class IconView {
   constructor(icon, options, isExtension) {
     Object.assign(this, icon)
 
-    const info = IconView.icons[this.name] || (options.icons && options.icons[this.name])
+    const info =
+      IconView.icons[this.name] || (options.icons && options.icons[this.name])
     if (!info) {
       if (this.name.startsWith("data:")) {
         Object.assign(this, {
           width: isExtension ? 40 : 24,
           height: isExtension ? 40 : 24,
           isDataIcon: true,
-          isExtensionIcon: !!isExtension
+          isExtensionIcon: !!isExtension,
         })
         return
       }
@@ -317,7 +318,10 @@ class BlockView {
 
     this.children = block.children.map((node, i) => {
       // If it's the first icon in a stack/hat block, it's an extension icon
-      const isExt = i === 0 && node instanceof Icon && (this.info.shape === "stack" || this.info.shape === "hat")
+      const isExt =
+        i === 0 &&
+        node instanceof Icon &&
+        (this.info.shape === "stack" || this.info.shape === "hat")
       return newView(node, { ...options, isExtensionIcon: isExt })
     })
 
@@ -427,7 +431,11 @@ class BlockView {
   }
 
   horizontalPadding(child) {
-    if (this.children[0] === child && child.isIcon && (this.info.shape === "stack" || this.info.shape === "hat")) {
+    if (
+      this.children[0] === child &&
+      child.isIcon &&
+      (this.info.shape === "stack" || this.info.shape === "hat")
+    ) {
       return 0
     }
     if (this.isRound) {
@@ -900,19 +908,25 @@ class DocumentView {
         // For raw SVG, we might need a different tag or just trust it.
         //
         // Wait, the specification says SVG code or image link.
-        iconElements.push(SVG.el("g", {
-          ...props,
-          innerHTML: icon, // browser-only
-        }))
+        iconElements.push(
+          SVG.el("g", {
+            ...props,
+            innerHTML: icon, // browser-only
+          }),
+        )
       } else {
         // Image link / data URL
-        iconElements.push(SVG.el("image", {
-          ...props,
-          href: icon,
-        }))
+        iconElements.push(
+          SVG.el("image", {
+            ...props,
+            href: icon,
+          }),
+        )
       }
     })
-    svg.appendChild((this.defs = SVG.withChildren(SVG.el("defs"), iconElements)))
+    svg.appendChild(
+      (this.defs = SVG.withChildren(SVG.el("defs"), iconElements)),
+    )
 
     svg.appendChild(
       SVG.setProps(SVG.group(elements), {

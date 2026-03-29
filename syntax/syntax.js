@@ -74,7 +74,9 @@ function paintBlock(info, children, languages) {
       info.isRTL = rtlLanguages.includes(lang.code)
 
       if (
-      type.shape === "ring" ? info.shape === "reporter" : info.shape === "stack"
+        type.shape === "ring"
+          ? info.shape === "reporter"
+          : info.shape === "stack"
       ) {
         info.shape = type.shape
       }
@@ -131,7 +133,9 @@ function paintBlock(info, children, languages) {
               (child.shape === "string" || child.shape === "number")
             ) {
               // Convert string inputs to string arguments, number inputs to number arguments.
-            const labels = child.value.split(/ +/g).map(word => new Label(word))
+              const labels = child.value
+                .split(/ +/g)
+                .map(word => new Label(word))
               child = paintBlock(
                 {
                   shape: "reporter",
@@ -336,9 +340,9 @@ function parseLines(code, languages, options) {
           } else {
             children.push(
               Object.prototype.hasOwnProperty.call(Icon.icons, name) ||
-              (options.icons &&
-                Object.prototype.hasOwnProperty.call(options.icons, name)) ||
-              name.startsWith("data:")
+                (options.icons &&
+                  Object.prototype.hasOwnProperty.call(options.icons, name)) ||
+                name.startsWith("data:")
                 ? new Icon(name)
                 : new Label(`@${name}`),
             )

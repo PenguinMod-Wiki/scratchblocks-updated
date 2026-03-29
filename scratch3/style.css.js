@@ -95,7 +95,6 @@ svg${name} .sb3-custom-arg {
 }
 `
 
-
 const originalStyle = {
   label: "#fff",
   inputColorStroke: "#fff",
