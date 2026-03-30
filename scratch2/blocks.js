@@ -298,6 +298,22 @@ class BlockView {
 
     // outlines
     if (this.info.shape === "outline") {
+      const os = this.info.outlineShape || "stack"
+      if (os === "reporter" && BlockView.shapes.reporter) {
+        return SVG.setProps(BlockView.shapes.reporter(w, h), {
+          class: "sb-outline",
+        })
+      }
+      if (os === "boolean" && BlockView.shapes.boolean) {
+        return SVG.setProps(BlockView.shapes.boolean(w, h), {
+          class: "sb-outline",
+        })
+      }
+      if (os === "cap" && BlockView.shapes.cap) {
+        return SVG.setProps(BlockView.shapes.cap(w, h), {
+          class: "sb-outline",
+        })
+      }
       return SVG.setProps(SVG.stackRect(w, h), {
         class: "sb-outline",
       })
@@ -338,7 +354,11 @@ class BlockView {
             ? 5
             : (2 + child.height / 2) | 0
     }
-    if (this.isReporter) {
+    if (
+      this.isReporter ||
+      (this.info.shape === "outline" &&
+        this.info.outlineShape === "reporter")
+    ) {
       return (child.isInput && child.isRound) ||
         ((child.isReporter || child.isBoolean) && !child.hasScript)
         ? 0
@@ -368,7 +388,14 @@ class BlockView {
     const isDefine = this.info.shape === "define-hat"
     let children = this.children
 
-    const padding = BlockView.padding[this.info.shape] || BlockView.padding.null
+    const padKey =
+      this.info.shape === "outline"
+        ? this.info.outlineShape && this.info.outlineShape !== "stack"
+          ? this.info.outlineShape
+          : null
+        : this.info.shape
+    const padding =
+      (padKey && BlockView.padding[padKey]) || BlockView.padding.null
     let pt = padding[0]
     const px = padding[1]
     const pb = padding[2]
@@ -454,11 +481,20 @@ class BlockView {
     }
     pushLine(true)
 
+    const outlineOs =
+      this.info.shape === "outline"
+        ? this.info.outlineShape || "stack"
+        : null
+    const outlineStackLike =
+      this.isOutline &&
+      outlineOs !== "reporter" &&
+      outlineOs !== "boolean"
+
     innerWidth = Math.max(
       innerWidth + px * 2,
       this.isHat || this.hasScript
         ? 83
-        : this.isCommand || this.isOutline || this.isRing
+        : this.isCommand || outlineStackLike || this.isRing
           ? 39
           : 20,
     )

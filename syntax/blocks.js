@@ -21,7 +21,7 @@ const overrideCategories = [
   ...Object.keys(aliasExtensions),
 ]
 
-const overrideShapes = [
+export const overrideShapes = [
   "hat",
   "cap",
   "stack",
@@ -44,6 +44,34 @@ export const iconPat = /(@(?:[a-zA-Z0-9_-]+|\([^)]+\)))/
 const splitPat = new RegExp(`${inputPat.source}|${iconPat.source}| +`, "g")
 
 export const hexColorPat = /^#(?:[0-9a-fA-F]{3}){1,2}?$/
+
+export function normalizeHexColor(hex) {
+  const h = hex.replace(/^#/, "")
+  if (h.length === 3) {
+    return `#${h[0]}${h[0]}${h[1]}${h[1]}${h[2]}${h[2]}`.toLowerCase()
+  }
+  return `#${h.toLowerCase()}`
+}
+
+function procedureDefineShadeHex(primaryHex, factor) {
+  const norm = normalizeHexColor(primaryHex).replace(/^#/, "")
+  const r = Math.round(parseInt(norm.slice(0, 2), 16) * factor)
+  const g = Math.round(parseInt(norm.slice(2, 4), 16) * factor)
+  const b = Math.round(parseInt(norm.slice(4, 6), 16) * factor)
+  return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`
+}
+
+export function procedureDefineSecondaryHex(primaryHex) {
+  return procedureDefineShadeHex(primaryHex, 0.8)
+}
+
+export function procedureDefinePrototypeShellHex(primaryHex) {
+  return procedureDefineShadeHex(primaryHex, 0.9)
+}
+
+export function procedureDefineTertiaryHex(primaryHex) {
+  return procedureDefineSecondaryHex(procedureDefineSecondaryHex(primaryHex))
+}
 
 export function parseInputNumber(part) {
   const m = inputNumberPat.exec(part)

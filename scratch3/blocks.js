@@ -11,6 +11,8 @@ import {
   aliasExtensions,
 } from "../syntax/index.js"
 
+import { procedureDefineSecondaryHex } from "../syntax/blocks.js"
+
 import SVG from "./draw.js"
 import style from "./style.js"
 const {
@@ -322,7 +324,10 @@ class BlockView {
     Object.assign(this, block)
 
     this.comment = this.comment ? newView(this.comment, options) : null
-    this.isRound = this.isReporter
+    this.isRound =
+      this.isReporter ||
+      (this.info.shape === "outline" &&
+        this.info.outlineShape === "reporter")
 
     this.info = { ...block.info }
 
@@ -415,9 +420,18 @@ class BlockView {
 
     // outlines
     if (this.info.shape === "outline") {
-      return SVG.setProps(SVG.stackRect(w, h), {
-        class: `sb3-${this.info.category} sb3-${this.info.category}-alt`,
-      })
+      const os = this.info.outlineShape || "stack"
+      const alt = `sb3-${this.info.category} sb3-${this.info.category}-alt`
+      if (os === "reporter" && BlockView.shapes.reporter) {
+        return SVG.setProps(BlockView.shapes.reporter(w, h), { class: alt })
+      }
+      if (os === "boolean" && BlockView.shapes.boolean) {
+        return SVG.setProps(BlockView.shapes.boolean(w, h), { class: alt })
+      }
+      if (os === "cap" && BlockView.shapes.cap) {
+        return SVG.setProps(BlockView.shapes.cap(w, h), { class: alt })
+      }
+      return SVG.setProps(SVG.stackRect(w, h), { class: alt })
     }
 
     // rings
@@ -504,6 +518,14 @@ class BlockView {
 
   draw(iconStyle) {
     const isDefine = this.info.shape === "define-hat"
+    const outlineShape =
+      this.info.shape === "outline"
+        ? this.info.outlineShape || "stack"
+        : null
+    const outlineUsesCommandLayout =
+      this.isOutline &&
+      outlineShape !== "reporter" &&
+      outlineShape !== "boolean"
     let children = this.children
     const isCommand = this.isCommand
 
@@ -591,7 +613,7 @@ class BlockView {
         if (children[0] != null) {
           const cmw = 48 - this.horizontalPadding(children[0])
           if (
-            (this.isCommand || this.isOutline) &&
+            (this.isCommand || outlineUsesCommandLayout) &&
             !child.isLabel &&
             !child.isIcon &&
             line.width < cmw
@@ -628,16 +650,19 @@ class BlockView {
         ? 160
         : this.isHat
           ? 100 // Correct for Scratch 3.0.
-          : this.isCommand || this.isOutline
+          : this.isCommand || outlineUsesCommandLayout
             ? 64
-            : this.isReporter
+            : this.isReporter || outlineShape === "reporter"
               ? 48
               : 0,
       innerWidth,
     )
 
     // Center the label text inside small reporters.
-    if (this.isReporter && !this.hasScript) {
+    if (
+      (this.isReporter || outlineShape === "reporter") &&
+      !this.hasScript
+    ) {
       padLeft += (innerWidth - originalInnerWidth) / 2
     }
 
@@ -690,10 +715,15 @@ class BlockView {
     const el = this.drawSelf(iconStyle, innerWidth, this.height, lines)
     objects.splice(0, 0, el)
     if (this.info.color) {
-      SVG.setProps(el, {
-        fill: this.info.color,
-        stroke: "rgba(0, 0, 0, 0.2)",
-      })
+      const stroke = this.info.defineCustomPrimary
+        ? procedureDefineSecondaryHex(this.info.defineCustomPrimary)
+        : "rgba(0, 0, 0, 0.2)"
+      const props = { fill: this.info.color, stroke }
+      if (this.info.defineCustomPrimary) {
+        props["stroke-linejoin"] = "round"
+        props["stroke-linecap"] = "round"
+      }
+      SVG.setProps(el, props)
     }
 
     return SVG.group(objects)

@@ -23,6 +23,9 @@ import {
   lookupHash,
   hashSpec,
   applyOverrides,
+  normalizeHexColor,
+  procedureDefinePrototypeShellHex,
+  overrideShapes,
   rtlLanguages,
   iconPat,
   blockName,
@@ -30,6 +33,7 @@ import {
 } from "./blocks.js"
 
 function paintBlock(info, children, languages) {
+  let defineHatPrimaryHex = null
   let overrides = []
   if (Array.isArray(children[children.length - 1])) {
     overrides = children.pop()
@@ -188,8 +192,58 @@ function paintBlock(info, children, languages) {
     }
   }
 
+  if (info.shape === "define-hat") {
+    const outline = children.find(child => child.isOutline)
+    if (outline) {
+      let lastShapeOverride = null
+      const filteredOverrides = []
+      for (const o of overrides) {
+        if (overrideShapes.includes(o)) {
+          lastShapeOverride = o
+        } else {
+          filteredOverrides.push(o)
+        }
+      }
+      overrides = filteredOverrides
+      if (lastShapeOverride) {
+        outline.info.outlineShape = lastShapeOverride
+      }
+      let lastHex = null
+      const overridesNoHex = []
+      for (const o of overrides) {
+        if (typeof o === "string" && hexColorPat.test(o)) {
+          lastHex = o
+        } else {
+          overridesNoHex.push(o)
+        }
+      }
+      overrides = overridesNoHex
+      if (lastHex) {
+        const primary = normalizeHexColor(lastHex)
+        defineHatPrimaryHex = primary
+        outline.info.color = procedureDefinePrototypeShellHex(primary)
+        outline.info.defineCustomPrimary = primary
+        outline.info.category = ""
+        outline.info.categoryIsDefault = false
+        for (const c of outline.children) {
+          if (c.isBlock) {
+            c.info.color = primary
+            c.info.defineCustomPrimary = primary
+          }
+        }
+      }
+    }
+  }
+
   // Apply overrides.
   applyOverrides(info, overrides)
+
+  if (info.shape === "define-hat" && defineHatPrimaryHex) {
+    info.color = defineHatPrimaryHex
+    info.defineCustomPrimary = defineHatPrimaryHex
+    info.category = ""
+    info.categoryIsDefault = false
+  }
 
   // loop arrows
   if (info.hasLoopArrow) {
@@ -947,6 +1001,13 @@ function recogniseStuff(scripts) {
           spec: spec,
           names: names,
         }
+        if (outline.info.defineCustomPrimary || outline.info.color) {
+          info.color =
+            outline.info.defineCustomPrimary || outline.info.color
+          if (outline.info.defineCustomPrimary) {
+            info.defineCustomPrimary = outline.info.defineCustomPrimary
+          }
+        }
         if (!customBlocksByHash[hash]) {
           customBlocksByHash[hash] = info
         }
@@ -997,6 +1058,14 @@ function recogniseStuff(scripts) {
           block.info.call = info.spec
           block.info.names = info.names
           block.info.category = "custom"
+          if (info.color) {
+            block.info.color = info.color
+            block.info.category = ""
+            block.info.categoryIsDefault = false
+          }
+          if (info.defineCustomPrimary) {
+            block.info.defineCustomPrimary = info.defineCustomPrimary
+          }
         }
         return
       }

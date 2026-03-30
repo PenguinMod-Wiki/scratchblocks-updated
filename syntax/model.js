@@ -230,6 +230,18 @@ export class Block {
       }
       overrides += this.info.shape
     }
+    if (this.isOutline && this.info.outlineShape) {
+      if (overrides) {
+        overrides += " "
+      }
+      overrides += this.info.outlineShape
+    }
+    if (this.isOutline && (this.info.defineCustomPrimary || this.info.color)) {
+      if (overrides) {
+        overrides += " "
+      }
+      overrides += this.info.defineCustomPrimary || this.info.color
+    }
     if (this.opcode && this.opcode !== this.info.id) {
       if (overrides) {
         overrides += " "
