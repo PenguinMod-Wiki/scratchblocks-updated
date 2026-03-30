@@ -59,7 +59,10 @@ export class Icon {
   static get icons() {
     return {
       greenFlag: true,
+      blueFlag: true,
       stopSign: true,
+      pause: true,
+      play: true,
       turnLeft: true,
       turnRight: true,
       loopArrow: true,

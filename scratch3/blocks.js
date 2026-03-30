@@ -141,7 +141,10 @@ export class IconView {
   static get icons() {
     return {
       greenFlag: { width: 20, height: 21, dy: -1 },
+      blueFlag: { width: 20, height: 20 },
       stopSign: { width: 20, height: 20 },
+      pause: { width: 20, height: 20 },
+      play: { width: 20, height: 20 },
       turnLeft: { width: 24, height: 24 },
       turnRight: { width: 24, height: 24 },
       loopArrow: { width: 24, height: 24 },

@@ -124,7 +124,10 @@ class IconView {
   static get icons() {
     return {
       greenFlag: { width: 20, height: 21, dy: -2 },
+      blueFlag: { width: 20, height: 20 },
       stopSign: { width: 20, height: 20 },
+      pause: { width: 20, height: 20 },
+      play: { width: 20, height: 20 },
       turnLeft: { width: 15, height: 12, dy: +1 },
       turnRight: { width: 15, height: 12, dy: +1 },
       loopArrow: { width: 14, height: 11 },

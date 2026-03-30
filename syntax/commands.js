@@ -487,7 +487,7 @@ export default [
   {
     id: "EVENT_WHENFLAGCLICKED",
     selector: "whenGreenFlag",
-    spec: "when @greenFlag clicked",
+    spec: "when @blueFlag clicked",
     inputs: [],
     shape: "hat",
     category: "events",
