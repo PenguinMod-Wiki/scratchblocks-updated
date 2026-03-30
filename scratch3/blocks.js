@@ -469,13 +469,6 @@ class BlockView {
   }
 
   horizontalPadding(child) {
-    if (
-      this.children[0] === child &&
-      child.isIcon &&
-      (this.info.shape === "stack" || this.info.shape === "hat")
-    ) {
-      return 0
-    }
     if (this.isRound) {
       if (child.isIcon) {
         return this.hasScript ? 12 : 16

@@ -427,6 +427,18 @@ when Sprite1 clicked
 `,
 )
 
+test(
+  "scratch2",
+  "en-icons",
+  `
+when @blueFlag clicked
+when @greenFlag clicked
+when @stopSign clicked
+when @pause clicked
+when @play clicked
+`,
+)
+
 /*****************************************************************************/
 
 // Scratch 3, English

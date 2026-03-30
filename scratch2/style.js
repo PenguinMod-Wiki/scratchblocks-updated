@@ -15,49 +15,55 @@ export default class Style {
         id: "greenFlag",
       }),
       SVG.setProps(
-        SVG.group([
-          SVG.withChildren(
-            SVG.el("defs"),
-            [
-              SVG.withChildren(
-                SVG.el("linearGradient", {
-                  id: "blueFlag-color-1",
-                  gradientUnits: "userSpaceOnUse",
-                  y2: "191.84137",
-                  x2: "240.07404",
-                  y1: "141.15092",
-                  x1: "240.07404",
-                }),
-                [
-                  SVG.el("stop", { "stop-color": "#00a5ff", offset: "0" }),
-                  SVG.el("stop", { "stop-color": "#0065ff", offset: "1" }),
-                ]
-              ),
-            ]
-          ),
-          SVG.withChildren(
-            SVG.el("g", { transform: "translate(-204.78243,-139.49547)" }),
-            [
-              SVG.withChildren(
-                SVG.el("g", { stroke: "#00316b", "fill-rule": "nonzero" }),
-                [
-                  SVG.el("path", {
-                    "stroke-linecap": "butt",
-                    "stroke-width": "3",
-                    fill: "url(#blueFlag-color-1)",
-                    d: "M207.43052,187.26642v-42.45554c0,0 7.45008,-3.65996 15.81171,-3.65996c8.98973,0 25.47635,8.23491 33.83366,8.23491c8.29234,0 15.64169,-4.57495 15.64169,-4.57495v42.45554c0,0 -7.37725,4.57495 -15.64169,4.57495c-7.51077,0 -24.57873,-8.23491 -32.98357,-8.23491c-8.73065,0 -16.6618,3.65996 -16.6618,3.65996z",
+        SVG.withChildren(
+          SVG.el("symbol", {
+            viewBox: "0 0 69.43514 81.85361",
+            preserveAspectRatio: "xMidYMid meet",
+          }),
+          [
+            SVG.withChildren(
+              SVG.el("defs"),
+              [
+                SVG.withChildren(
+                  SVG.el("linearGradient", {
+                    id: "blueFlag-color-1",
+                    gradientUnits: "userSpaceOnUse",
+                    y2: "191.84137",
+                    x2: "240.07404",
+                    y1: "141.15092",
+                    x1: "240.07404",
                   }),
-                  SVG.el("path", {
-                    "stroke-linecap": "round",
-                    "stroke-width": "5",
-                    fill: "none",
-                    d: "M207.28244,218.84908v-76.85361",
-                  }),
-                ]
-              ),
-            ]
-          ),
-        ]),
+                  [
+                    SVG.el("stop", { "stop-color": "#00a5ff", offset: "0" }),
+                    SVG.el("stop", { "stop-color": "#0065ff", offset: "1" }),
+                  ],
+                ),
+              ],
+            ),
+            SVG.withChildren(
+              SVG.el("g", { transform: "translate(-204.78243,-139.49547)" }),
+              [
+                SVG.withChildren(
+                  SVG.el("g", { stroke: "#00316b", "fill-rule": "nonzero" }),
+                  [
+                    SVG.el("path", {
+                      "stroke-linecap": "butt",
+                      "stroke-width": "3",
+                      fill: "url(#blueFlag-color-1)",
+                      d: "M207.43052,187.26642v-42.45554c0,0 7.45008,-3.65996 15.81171,-3.65996c8.98973,0 25.47635,8.23491 33.83366,8.23491c8.29234,0 15.64169,-4.57495 15.64169,-4.57495v42.45554c0,0 -7.37725,4.57495 -15.64169,4.57495c-7.51077,0 -24.57873,-8.23491 -32.98357,-8.23491c-8.73065,0 -16.6618,3.65996 -16.6618,3.65996z",
+                    }),
+                    SVG.el("path", {
+                      "stroke-linecap": "round",
+                      "stroke-width": "5",
+                      fill: "none",
+                      d: "M207.28244,218.84908v-76.85361",
+                    }),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
         {
           id: "blueFlag",
         },
