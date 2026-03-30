@@ -259,7 +259,7 @@
     "putar ke kiri %1 derajat": "MOTION_TURNLEFT",
     "putar ke kanan %1 derajat": "MOTION_TURNRIGHT",
     "ketika bendera hijau diklik": "EVENT_WHENFLAGCLICKED",
-    "selesai": "scratchblocks:end"
+    "selesai": "penguinblocks:end"
   },
   "name": "Bahasa Indonesia",
   "percentTranslated": 100

@@ -259,7 +259,7 @@
     "cuairtich @turnLeft le %1 ceum": "MOTION_TURNLEFT",
     "cuairtich @turnRight le %1 ceum": "MOTION_TURNRIGHT",
     "le briogadh air @greenFlag": "EVENT_WHENFLAGCLICKED",
-    "deireadh": "scratchblocks:end"
+    "deireadh": "penguinblocks:end"
   },
   "name": "Gàidhlig",
   "percentTranslated": 100

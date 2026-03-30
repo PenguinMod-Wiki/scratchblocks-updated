@@ -300,3 +300,4 @@ schalte Motor aus
 schalte Motor für (1) Sekunden an
 setze Motorkraft auf (100)
 setze Motorrichtung auf [this way v]
+

@@ -58,7 +58,7 @@ export default [
     output: {
       file: pkg.main,
       format: "iife",
-      name: "scratchblocks",
+      name: "penguinblocks",
       sourcemap: env.prod,
     },
     plugins: [
@@ -144,3 +144,4 @@ export default [
     ],
   },
 ]
+

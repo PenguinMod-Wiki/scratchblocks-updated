@@ -260,7 +260,7 @@
     "gira a la dreta %1 graus": "MOTION_TURNRIGHT",
     "quan la bandera verda es cliqui": "EVENT_WHENFLAGCLICKED",
     "quan la bandera verda es premi": "EVENT_WHENFLAGCLICKED",
-    "fi": "scratchblocks:end"
+    "fi": "penguinblocks:end"
   },
   "name": "Català",
   "percentTranslated": 100

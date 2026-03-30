@@ -1,8 +1,9 @@
 import init from "./index.js"
 
-const scratchblocks = init(window)
+const penguinblocks = init(window)
 
 // add our CSS to the page
-scratchblocks.appendStyles()
+penguinblocks.appendStyles()
 
-export default scratchblocks
+export default penguinblocks
+

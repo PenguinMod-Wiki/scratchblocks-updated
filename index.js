@@ -1,6 +1,6 @@
 /*
- * scratchblocks
- * http://scratchblocks.github.io/
+ * penguinblocks
+ * http://penguinblocks.github.io/
  *
  * Copyright 2013-2016, Tim Radvan
  * @license MIT
@@ -56,7 +56,7 @@ export default function (window) {
     const view = newView(doc, options)
     const svg = view.render()
     // Used in high contrast theme
-    svg.classList.add(`scratchblocks-style-${options.style}`)
+    svg.classList.add(`penguinblocks-style-${options.style}`)
     return svg
   }
 
@@ -86,16 +86,16 @@ export default function (window) {
     let container
     if (options.inline) {
       container = document.createElement("span")
-      let cls = "scratchblocks scratchblocks-inline"
+      let cls = "penguinblocks penguinblocks-inline"
       if (doc.scripts[0] && !doc.scripts[0].isEmpty) {
-        cls += ` scratchblocks-inline-${doc.scripts[0].blocks[0].shape}`
+        cls += ` penguinblocks-inline-${doc.scripts[0].blocks[0].shape}`
       }
       container.className = cls
       container.style.display = "inline-block"
       container.style.verticalAlign = "middle"
     } else {
       container = document.createElement("div")
-      container.className = "scratchblocks"
+      container.className = "penguinblocks"
     }
     container.appendChild(svg)
 
@@ -106,9 +106,9 @@ export default function (window) {
   /* Render all matching elements in page to shiny scratch blocks.
    * Accepts a CSS selector as an argument.
    *
-   *  scratchblocks.renderMatching("pre.blocks");
+   *  penguinblocks.renderMatching("pre.blocks");
    *
-   * Like the old 'scratchblocks2.parse().
+   * Like the old 'penguinblocks2.parse().
    */
   const renderMatching = function (selector, options) {
     selector = selector || "pre.blocks"
@@ -166,3 +166,4 @@ export default function (window) {
     appendStyles: appendStyles,
   }
 }
+

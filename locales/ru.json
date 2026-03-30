@@ -259,7 +259,7 @@
     "повернуть влево на %1 градусов": "MOTION_TURNLEFT",
     "повернуть вправо на %1 градусов": "MOTION_TURNRIGHT",
     "когда щёлкнут по зелёному флагу": "EVENT_WHENFLAGCLICKED",
-    "конец": "scratchblocks:end"
+    "конец": "penguinblocks:end"
   },
   "name": "Русский",
   "percentTranslated": 100

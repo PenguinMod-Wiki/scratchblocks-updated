@@ -34,3 +34,4 @@ jobs:
         with:
           commit_message: "Format code using Prettier"
           branch: ${{ github.head_ref }}
+

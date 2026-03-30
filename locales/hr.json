@@ -259,7 +259,7 @@
     "skreni lijevo %1 stupnjeva": "MOTION_TURNLEFT",
     "skreni desno %1 stupnjeva": "MOTION_TURNRIGHT",
     "kada je zelena zastava kliknut": "EVENT_WHENFLAGCLICKED",
-    "kraj": "scratchblocks:end"
+    "kraj": "penguinblocks:end"
   },
   "name": "Hrvatski",
   "percentTranslated": 100

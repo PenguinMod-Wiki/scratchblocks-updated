@@ -1176,21 +1176,21 @@ export default [
     category: "control",
   },
   {
-    id: "scratchblocks:end",
+    id: "penguinblocks:end",
     spec: "end",
     inputs: [],
     shape: "cend",
     category: "control",
   },
   {
-    id: "scratchblocks:ellipsis",
+    id: "penguinblocks:ellipsis",
     spec: ". . .",
     inputs: [],
     shape: "stack",
     category: "grey",
   },
   {
-    id: "scratchblocks:addInput",
+    id: "penguinblocks:addInput",
     spec: "%1 @addInput",
     inputs: ["%n"],
     shape: "ring",
@@ -1753,3 +1753,4 @@ export default [
     category: "boost",
   },
 ]
+

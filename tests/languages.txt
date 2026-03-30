@@ -30,3 +30,4 @@ obróć w lewo o (10) stopni
 obróć w prawo o (10) stopni
 forever
 koniec
+

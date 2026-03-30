@@ -261,7 +261,7 @@ export class Block {
       ? text +
           "\n" +
           (Object.keys(lang.aliases).find(
-            key => lang.aliases[key] === "scratchblocks:end",
+            key => lang.aliases[key] === "penguinblocks:end",
           ) || "end")
       : this.info.shape === "reporter"
         ? `(${text})`
@@ -461,3 +461,4 @@ export class Document {
     this.scripts.forEach(script => script.translate(lang))
   }
 }
+

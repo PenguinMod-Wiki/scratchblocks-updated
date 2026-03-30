@@ -451,3 +451,4 @@ export default class SVG {
     })
   }
 }
+

@@ -222,5 +222,6 @@ const highContrastStyle = {
 
 export default common +
   create("", originalStyle) +
-  create(".scratchblocks-style-scratch3-high-contrast", highContrastStyle) +
+  create(".penguinblocks-style-scratch3-high-contrast", highContrastStyle) +
   commonOverride
+

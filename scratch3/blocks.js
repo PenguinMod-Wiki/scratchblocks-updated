@@ -1059,3 +1059,4 @@ const viewFor = node => {
 export const newView = (node, options) => {
   return new (viewFor(node))(node, options)
 }
+

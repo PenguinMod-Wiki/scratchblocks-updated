@@ -868,3 +868,4 @@ const viewFor = node => {
 }
 
 export const newView = (node, options) => new (viewFor(node))(node, options)
+

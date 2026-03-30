@@ -36,3 +36,4 @@ jobs:
 
       - name: Check whether the code builds
         run: npm run build
+

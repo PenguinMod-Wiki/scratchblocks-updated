@@ -262,7 +262,7 @@
     "%1 derece saatin tersi yönde dön": "MOTION_TURNLEFT",
     "%1 derece saat yönünde dön": "MOTION_TURNRIGHT",
     "yeşil bayrak tıklandığında": "EVENT_WHENFLAGCLICKED",
-    "son": "scratchblocks:end"
+    "son": "penguinblocks:end"
   },
   "name": "Türkçe",
   "percentTranslated": 100

@@ -1129,3 +1129,4 @@ export function parse(code, options) {
   recogniseStuff(scripts)
   return new Document(scripts)
 }
+
