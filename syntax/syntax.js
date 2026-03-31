@@ -221,7 +221,7 @@ function paintBlock(info, children, languages) {
       if (lastHex) {
         const primary = normalizeHexColor(lastHex)
         defineHatPrimaryHex = primary
-        outline.info.color = procedureDefinePrototypeShellHex(primary)
+        outline.info.color = primary
         outline.info.defineCustomPrimary = primary
         outline.info.category = ""
         outline.info.categoryIsDefault = false
@@ -229,6 +229,7 @@ function paintBlock(info, children, languages) {
           if (c.isBlock) {
             c.info.color = primary
             c.info.defineCustomPrimary = primary
+            c.info.category = ""
           }
         }
       }

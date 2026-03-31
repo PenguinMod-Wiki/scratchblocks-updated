@@ -250,7 +250,7 @@ export class InputView {
     } else if (this.isColor) {
       w = 40
     } else if (this.hasLabel) {
-      label = this.label.draw(iconStyle)
+      label = this.label.draw(iconStyle, parent)
       if (this.hasArrow) {
         px = 11
         w = this.label.width + px + 31
@@ -271,7 +271,7 @@ export class InputView {
     const el = InputView.shapes[this.shape](w, h)
     SVG.setProps(el, {
       class: `${
-        this.isColor ? "" : `sb3-${parent.info.category}`
+        this.isColor || parent.info.color ? "" : `sb3-${parent.info.category}`
       } sb3-input sb3-input-${this.shape}`,
     })
 
@@ -279,29 +279,25 @@ export class InputView {
       SVG.setProps(el, {
         fill: this.value,
       })
+    } else if (parent.info.color) {
+      SVG.setProps(el, {
+        fill: parent.info.color,
+        stroke: "rgba(0, 0, 0, 0.2)",
+      })
     } else if (this.shape === "dropdown") {
-      // custom colors
-      if (parent.info.color) {
-        SVG.setProps(el, {
-          fill: parent.info.color,
-          stroke: "rgba(0, 0, 0, 0.2)",
-        })
-      }
     } else if (this.shape === "number-dropdown") {
       el.classList.add(`sb3-${parent.info.category}-alt`)
 
-      // custom colors
       if (parent.info.color) {
         SVG.setProps(el, {
           fill: "rgba(0, 0, 0, 0.1)",
-          stroke: "rgba(0, 0, 0, 0.15)", // combines with fill...
+          stroke: "rgba(0, 0, 0, 0.15)",
         })
       }
     } else if (this.shape === "boolean") {
       el.classList.remove(`sb3-${parent.info.category}`)
       el.classList.add(`sb3-${parent.info.category}-dark`)
 
-      // custom colors
       if (parent.info.color) {
         SVG.setProps(el, {
           fill: "rgba(0, 0, 0, 0.15)",
@@ -419,6 +415,8 @@ class BlockView {
   }
 
   drawSelf(iconStyle, w, h, lines) {
+    const categoryClass = this.info.color ? "" : `sb3-${this.info.category}`
+
     // mouths
     if (lines.length > 1) {
       return SVG.mouthRect(
@@ -427,7 +425,7 @@ class BlockView {
         this.isFinal,
         lines,
         {
-          class: `sb3-${this.info.category}`,
+          class: categoryClass,
         },
         this.info.shape,
       )
@@ -436,7 +434,7 @@ class BlockView {
     // outlines
     if (this.info.shape === "outline") {
       const os = this.info.outlineShape || "stack"
-      const alt = `sb3-${this.info.category} sb3-${this.info.category}-alt`
+      const alt = categoryClass ? `${categoryClass} ${categoryClass}-alt` : ""
       if (os === "reporter" && BlockView.shapes.reporter) {
         return SVG.setProps(BlockView.shapes.reporter(w, h), { class: alt })
       }
@@ -454,7 +452,7 @@ class BlockView {
       const child = this.children[0]
       if (child && (child.isInput || child.isBlock || child.isScript)) {
         return SVG.roundRect(w, h, {
-          class: `sb3-${this.info.category}`,
+          class: categoryClass,
         })
       }
     }
@@ -464,7 +462,7 @@ class BlockView {
       throw new Error(`no shape func: ${this.info.shape}`)
     }
     return func(w, h, {
-      class: `sb3-${this.info.category}`,
+      class: categoryClass,
     })
   }
 
