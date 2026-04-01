@@ -34,6 +34,159 @@ const isURI = name =>
     name.startsWith("/") ||
     name.startsWith("./"))
 
+const makeCustomShape = (shape, w, h, props) => {
+  if (typeof shape === "function") {
+    return shape(w, h, props)
+  }
+  let { path } = shape
+  if (typeof path === "function") {
+    path = path(w, h)
+  }
+  if (typeof path === "string") {
+    path = path.replace(/{w}/g, w).replace(/{h}/g, h)
+  }
+  if (!Array.isArray(path)) {
+    path = [path]
+  }
+  return SVG.path({ ...props, path })
+}
+
+const hexagonalShape = (w, h, props) =>
+  SVG.path({
+    ...props,
+    path: [
+      "M 20 0",
+      "H", w - 20,
+      "l 10 0",
+      "l 10 10",
+      "v", h - 20,
+      "l -10 10",
+      "l -10 0",
+      "H 20",
+      "l -10 0",
+      "l -10 -10",
+      "v", -(h - 20),
+      "l 10 -10",
+      "l 10 0",
+      "z",
+    ],
+  })
+
+const roundShape = (w, h, props) => {
+  const r = h / 2
+  return SVG.path({
+    ...props,
+    path: [
+      "M", r, 0,
+      "h", w - 2 * r,
+      "a", r, r, 0, 0, 1, 0, h,
+      "h", -(w - 2 * r),
+      "a", r, r, 0, 0, 1, 0, -h,
+      "z",
+    ],
+  })
+}
+
+const squareShape = (w, h, props) =>
+  SVG.path({
+    ...props,
+    path: [
+      "m 0,4",
+      "A 4,4 0 0,1 4,0",
+      "H", w - 4,
+      "a 4,4 0 0,1 4,4",
+      "v", h - 8,
+      "a 4,4 0 0,1 -4,4",
+      "H 4",
+      "a 4,4 0 0,1 -4,-4",
+      "z",
+    ],
+  })
+
+const leafShape = (w, h, props) =>
+  SVG.path({
+    ...props,
+    path: [
+      "m 0,0",
+      "m 20,0",
+      "H", w - 20,
+      "a 20 20 0 0 1 20 20",
+      "l 0", h - 28,
+      "a 8 8 0 0 1 -8 8",
+      "H 20",
+      "a 20 20 0 0 1 -20 -20",
+      "l 0", -(h - 28),
+      "a 8 8 0 0 1 8 -8",
+      "z",
+    ],
+  })
+
+const plusShape = (w, h, props) =>
+  SVG.path({
+    ...props,
+    path: [
+      "m 0,0",
+      "m 20,0",
+      "H", w - 20,
+      "l 0 0",
+      "a 6 6 0 0 1 6 6",
+      "a 6 6 0 0 0 6 6",
+      "l 2 0",
+      "a 6 6 0 0 1 6 6",
+      "l 0 4",
+      "a 6 6 0 0 1 -6 6",
+      "l -2 0",
+      "a 6 6 0 0 0 -6 6",
+      "a 6 6 0 0 1 -6 6",
+      "l 0 0",
+      "H 20",
+      "l 0 0",
+      "a 6 6 0 0 1 -6 -6",
+      "a 6 6 0 0 0 -6 -6",
+      "l -2 0",
+      "a 6 6 0 0 1 -6 -6",
+      "l 0 -4",
+      "a 6 6 0 0 1 6 -6",
+      "l 2 0",
+      "a 6 6 0 0 0 6 -6",
+      "a 6 6 0 0 1 6 -6",
+      "l 0 0",
+      "z",
+    ],
+  })
+
+const ticketShape = (w, h, props) =>
+  SVG.path({
+    ...props,
+    path: [
+      "m 0,0",
+      "m 20,0",
+      "H", w - 20,
+      "h 20",
+      "a 2 2 0 0 1 2 2",
+      "v 9.3",
+      "a 2 2 0 0 1 -2 2",
+      "h -10",
+      "c -4 2 -4 12 0 13.4",
+      "h 10",
+      "a 2 2 0 0 1 2 2",
+      "v 9.3",
+      "a 2 2 0 0 1 -2 2",
+      "H 20",
+      "h -19",
+      "a 2 2 0 0 1 -2 -2",
+      "v -9.3",
+      "a 2 2 0 0 1 2 -2",
+      "h 10",
+      "c 4 -2 4 -12 0 -13.4",
+      "h -10",
+      "a 2 2 0 0 1 -2 -2",
+      "v -9.3",
+      "a 2 2 0 0 1 2 -2",
+      "z",
+    ],
+  })
+
 export class LabelView {
   constructor(label) {
     Object.assign(this, label)
@@ -216,6 +369,7 @@ export class LineView {
 export class InputView {
   constructor(input, options) {
     Object.assign(this, input)
+    this.options = options
     if (input.label) {
       this.label = newView(input.label, options)
     }
@@ -247,6 +401,13 @@ export class InputView {
       boolean: SVG.pointedRect,
       stack: SVG.stackRect,
       reporter: SVG.pillRect,
+
+      hexagonal: hexagonalShape,
+      round: roundShape,
+      square: squareShape,
+      leaf: leafShape,
+      plus: plusShape,
+      ticket: ticketShape,
     }
   }
 
@@ -258,30 +419,91 @@ export class InputView {
     const isLiteral =
       (this.shape === "string" || this.shape === "number") && !isDefine
 
+    const customShape =
+      this.options.shapes && this.options.shapes[this.shape]
+
+    const h = (this.height = (customShape && customShape.height) || 32)
+
     if (this.isBoolean) {
-      w = 48
+      w = (customShape && customShape.emptyInputWidth) || 48
     } else if (this.isColor) {
       w = 40
     } else if (this.hasLabel) {
       label = this.label.draw(iconStyle, isLiteral ? this : parent)
       if (this.hasArrow) {
-        px = 11
-        w = this.label.width + px + 31
+        px =
+          customShape &&
+          customShape.padding &&
+          typeof customShape.padding.left === "number"
+            ? customShape.padding.left
+            : this.shape === "hexagonal" || this.shape === "round"
+              ? 16
+              : this.shape === "leaf" || this.shape === "plus" || this.shape === "ticket"
+                ? 24
+                : 11
+        const pr =
+          customShape &&
+          customShape.padding &&
+          typeof customShape.padding.right === "number"
+            ? customShape.padding.right
+            : 31
+        w = this.label.width + px + pr
       } else {
         // Minimum padding of 11
         // Minimum width of 40, at which point we center the label
-        px = this.label.width >= 18 ? 11 : (40 - this.label.width) / 2
-        w = this.label.width + 2 * px
+        px =
+          customShape &&
+          customShape.padding &&
+          typeof customShape.padding.left === "number"
+            ? customShape.padding.left
+            : this.shape === "hexagonal" || this.shape === "round"
+              ? 16
+              : this.shape === "leaf" || this.shape === "plus" || this.shape === "ticket"
+                ? 24
+                : this.label.width >= 18
+                  ? 11
+                  : (40 - this.label.width) / 2
+        const pr =
+          customShape &&
+          customShape.padding &&
+          typeof customShape.padding.right === "number"
+            ? customShape.padding.right
+            : px
+        w = this.label.width + px + pr
       }
-      label = SVG.move(px, 9, label)
+      const py =
+        customShape &&
+        customShape.padding &&
+        typeof customShape.padding.top === "number"
+          ? customShape.padding.top
+          : h / 2 - 7
+      label = SVG.move(px, py, label)
     } else {
       w = this.isInset ? 30 : null
     }
+
+    if (customShape && typeof customShape.width === "number") {
+      w = customShape.width
+    }
     this.width = w
 
-    const h = (this.height = 32)
+    const shapeInfo = customShape || InputView.shapes[this.shape]
+    let el
+    if (
+      customShape &&
+      customShape.emptyInputPath &&
+      (!this.hasLabel || this.label.value === "")
+    ) {
+      el = makeCustomShape({ path: customShape.emptyInputPath }, w, h)
+    } else if (
+      typeof shapeInfo === "object" &&
+      !(shapeInfo instanceof Function)
+    ) {
+      el = makeCustomShape(shapeInfo, w, h)
+    } else {
+      el = shapeInfo(w, h)
+    }
 
-    const el = InputView.shapes[this.shape](w, h)
     SVG.setProps(el, {
       class: `${
         this.isColor || parent.info.color ? "" : `sb3-${parent.info.category}`
@@ -353,6 +575,7 @@ export class InputView {
 class BlockView {
   constructor(block, options) {
     Object.assign(this, block)
+    this.options = options
 
     this.comment = this.comment ? newView(this.comment, options) : null
     this.isRound =
@@ -433,6 +656,13 @@ class BlockView {
       cat: SVG.catHat,
       "define-hat": SVG.procHatRect,
       ring: SVG.pillRect,
+
+      hexagonal: hexagonalShape,
+      round: roundShape,
+      square: squareShape,
+      leaf: leafShape,
+      plus: plusShape,
+      ticket: ticketShape,
     }
   }
 
@@ -479,11 +709,18 @@ class BlockView {
       }
     }
 
-    const func = BlockView.shapes[this.info.shape]
-    if (!func) {
+    const shapeInfo =
+      (this.options.shapes && this.options.shapes[this.info.shape]) ||
+      BlockView.shapes[this.info.shape]
+    if (!shapeInfo) {
       throw new Error(`no shape func: ${this.info.shape}`)
     }
-    return func(w, h, {
+    if (typeof shapeInfo === "object" && !(shapeInfo instanceof Function)) {
+      return makeCustomShape(shapeInfo, w, h, {
+        class: categoryClass,
+      })
+    }
+    return shapeInfo(w, h, {
       class: categoryClass,
     })
   }
@@ -493,11 +730,42 @@ class BlockView {
       hat: [24, 8],
       cat: [24, 8],
       "define-hat": [20, 16],
+      hexagonal: [4, 4],
+      round: [4, 4],
+      square: [4, 4],
+      leaf: [4, 4],
+      plus: [4, 4],
+      ticket: [4, 4],
       null: [4, 4],
     }
   }
 
   horizontalPadding(child) {
+    const customShape =
+      this.options.shapes && this.options.shapes[this.info.shape]
+    if (customShape && customShape.padding) {
+      if (
+        child === this.children[0] &&
+        typeof customShape.padding.left === "number"
+      ) {
+        return customShape.padding.left
+      }
+      if (
+        child === this.children[this.children.length - 1] &&
+        typeof customShape.padding.right === "number"
+      ) {
+        return customShape.padding.right
+      }
+    }
+
+    const shape = this.info.shape
+    if (shape === "hexagonal" || shape === "round") {
+      return 16
+    }
+    if (shape === "leaf" || shape === "plus" || shape === "ticket") {
+      return 24
+    }
+
     if (this.isRound) {
       if (child.isIcon) {
         return this.hasScript ? 12 : 16
@@ -557,7 +825,15 @@ class BlockView {
     let children = this.children
     const isCommand = this.isCommand
 
-    const padding = BlockView.padding[this.info.shape] || BlockView.padding.null
+    const customShape =
+      this.options.shapes && this.options.shapes[this.info.shape]
+    let padding =
+      (customShape && customShape.padding) ||
+      BlockView.padding[this.info.shape] ||
+      BlockView.padding.null
+    if (!Array.isArray(padding)) {
+      padding = [padding.top || 0, padding.bottom || 0]
+    }
     const pt = padding[0],
       pb = padding[1]
 

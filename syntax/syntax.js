@@ -32,7 +32,7 @@ import {
   blocksById,
 } from "./blocks.js"
 
-function paintBlock(info, children, languages) {
+function paintBlock(info, children, languages, options) {
   let defineHatPrimaryHex = null
   let overrides = []
   if (Array.isArray(children[children.length - 1])) {
@@ -151,6 +151,7 @@ function paintBlock(info, children, languages) {
                 },
                 [new Label("")],
                 languages,
+                options,
               )
             } else if (
               child.isInput &&
@@ -168,6 +169,7 @@ function paintBlock(info, children, languages) {
                 },
                 labels,
                 languages,
+                options,
               )
             } else if (child.isReporter || child.isBoolean) {
               // Convert variables to number arguments, predicates to boolean arguments.
@@ -243,7 +245,7 @@ function paintBlock(info, children, languages) {
   }
 
   // Apply overrides.
-  applyOverrides(info, overrides)
+  applyOverrides(info, overrides, options)
 
   if (info.shape === "define-hat" && defineHatPrimaryHex) {
     info.color = defineHatPrimaryHex
@@ -333,7 +335,7 @@ function parseLines(code, languages, options) {
       hasLoopArrow: false,
     }
 
-    return paintBlock(info, children, languages)
+    return paintBlock(info, children, languages, options)
   }
 
   function makeMenu(shape, value) {

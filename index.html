@@ -63,6 +63,69 @@
 .cmp img {
   display: none;
 }
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.modal-content {
+  background-color: var(--container-bg);
+  margin: 5% auto;
+  padding: 2rem;
+  border: 1px solid var(--container-border);
+  width: 90%;
+  max-width: 600px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  color: var(--text-color);
+}
+
+.close-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--text-color);
+  line-height: 1;
+  user-select: none;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.close-button:hover {
+  background: var(--link-hover-bg);
+}
+
+.modal #custom-icons-section {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+@media screen and (max-width: 48em) {
+  .modal-content {
+    margin: 10% auto;
+    padding: 1.5rem;
+    width: 95%;
+  }
+}
 </style>
 
 <!---------------------------------------------------------------------------->
@@ -72,6 +135,7 @@
   <span>
     <a target="_blank" href="https://wiki.scratch.mit.edu/wiki/Block_Plugin/Syntax">help</a>
     <a href="https://github.com/PenguinMod-Wiki/penguinblocks">github</a>
+    <a id="open-settings" href="#">settings</a>
     <a href="new-syntax.html"><b>new syntax</b></a>
   </span>
 </h1>
@@ -92,28 +156,33 @@
 </div>
 
 <textarea id="editor"></textarea>
-
-<div id="custom-icons-section">
-  <h3>Custom Icons</h3>
-  <p class="custom-icons-help">Use <code>@name</code> in your code to insert a custom icon.</p>
-  <div class="custom-icons-form">
-    <input type="text" id="new-icon-name" placeholder="Icon name (e.g. myIcon)">
-    <textarea id="new-icon-data" placeholder="Data URI or SVG code"></textarea>
-    <div class="custom-icons-form-row">
-      <input type="file" id="icon-file-upload" accept="image/*,.svg">
-      <button id="add-icon-btn">
-        <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor; vertical-align: middle; margin-right: 4px;">
-          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-        </svg>
-        Add Icon
-      </button>
-    </div>
-  </div>
-  <ul id="custom-icons-list"></ul>
-</div>
 </div>
 
 <pre id="preview" class="blocks"></pre>
+
+<div id="settings-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <div id="custom-icons-section">
+      <h3>Custom Icons</h3>
+      <p class="custom-icons-help">Use <code>@name</code> in your code to insert a custom icon.</p>
+      <div class="custom-icons-form">
+        <input type="text" id="new-icon-name" placeholder="Icon name (e.g. myIcon)">
+        <textarea id="new-icon-data" placeholder="Data URI or SVG code"></textarea>
+        <div class="custom-icons-form-row">
+          <input type="file" id="icon-file-upload" accept="image/*,.svg">
+          <button id="add-icon-btn">
+            <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor; vertical-align: middle; margin-right: 4px;">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            Add Icon
+          </button>
+        </div>
+      </div>
+      <ul id="custom-icons-list"></ul>
+    </div>
+  </div>
+</div>
 
 <!---------------------------------------------------------------------------->
 
@@ -475,6 +544,25 @@ function updatedFromHash() {
 
 updatedFromHash();
 updateIconsList();
+
+var modal = document.getElementById("settings-modal");
+var btn = document.getElementById("open-settings");
+var span = document.getElementsByClassName("close-button")[0];
+
+btn.onclick = function(e) {
+  e.preventDefault();
+  modal.style.display = "block";
+}
+
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
 
 </script>
 

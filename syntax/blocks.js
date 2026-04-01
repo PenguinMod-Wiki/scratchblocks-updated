@@ -29,6 +29,12 @@ export const overrideShapes = [
   "reporter",
   "ring",
   "cat",
+  "hexagonal",
+  "round",
+  "square",
+  "leaf",
+  "plus",
+  "ticket",
 ]
 
 // languages that should be displayed right to left
@@ -498,7 +504,7 @@ export function lookupDropdown(name, languages) {
   }
 }
 
-export function applyOverrides(info, overrides) {
+export function applyOverrides(info, overrides, options) {
   for (const name of overrides) {
     if (hexColorPat.test(name)) {
       info.color = name
@@ -507,7 +513,10 @@ export function applyOverrides(info, overrides) {
     } else if (overrideCategories.includes(name)) {
       info.category = name
       info.categoryIsDefault = false
-    } else if (overrideShapes.includes(name)) {
+    } else if (
+      overrideShapes.includes(name) ||
+      (options && options.shapes && options.shapes[name])
+    ) {
       info.shape = name
       info.shapeIsDefault = false
     } else if (name === "loop") {

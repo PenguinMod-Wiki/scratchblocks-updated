@@ -514,10 +514,18 @@ button:active, button.pressed, .button:active, .button.pressed {
   color: var(--cm-obsolete);
   border-radius: 4px;
   transition: background 0.2s;
+  top: 0;
+  left: 0;
+  margin-bottom: 0;
 }
 
-.delete-icon-btn:hover {
-  background: rgba(212, 25, 25, 0.1);
+.delete-icon-btn:hover,
+.delete-icon-btn:active {
+  background: rgba(212, 25, 25, 0.1) !important;
+  border: none !important;
+  top: 0 !important;
+  left: 0 !important;
+  border-bottom-width: 0 !important;
 }
 
 .delete-icon-btn svg {
