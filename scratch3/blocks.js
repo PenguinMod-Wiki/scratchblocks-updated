@@ -639,6 +639,11 @@ export class InputView {
           fill: "#fff",
           stroke: "rgba(0, 0, 0, 0.2)",
         })
+      } else if (this.shape === "dropdown" || this.shape === "number-dropdown") {
+        SVG.setProps(el, {
+          fill: "rgba(0, 0, 0, 0.2)",
+          stroke: "rgba(0, 0, 0, 0.2)",
+        })
       } else {
         SVG.setProps(el, {
           fill: parent.info.color,
@@ -1494,4 +1499,3 @@ const viewFor = node => {
 export const newView = (node, options) => {
   return new (viewFor(node))(node, options)
 }
-
