@@ -321,7 +321,8 @@ export class LabelView {
       parent.info &&
       parent.info.color &&
       parent.isBlock &&
-      !parent.info.isDefaultColor
+      !parent.info.isDefaultColor &&
+      (parent.info.shape === "define-hat" || parent.info.category === "custom")
     ) {
       const textColor = getContrastColor(parent.info.color)
       SVG.setProps(this.el, {
