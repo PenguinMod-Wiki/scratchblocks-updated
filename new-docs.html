@@ -95,10 +95,16 @@
             align-items: flex-start;
             padding: 0 1em;
         }
+        h1 {
+            border-bottom: 1px solid var(--container-border);
+            padding-bottom: 0.3em;
+        }
         h2 {
             margin-top: 1.5em;
             border-bottom: 1px solid var(--container-border);
             padding-bottom: 0.3em;
+            font-weight: normal;
+            font-size: 1.3em;
         }
         header {
             width: 100%;
@@ -148,7 +154,7 @@
 <script>
     async function loadContent() {
         try {
-            const response = await fetch('new-syntax.md');
+            const response = await fetch('new-docs.md');
             const markdown = await response.text();
 
             marked.use({
@@ -181,7 +187,7 @@
             contentDiv.innerHTML = html;
 
             const tocList = document.getElementById('toc-list');
-            const headers = contentDiv.querySelectorAll('h2, h3');
+            const headers = contentDiv.querySelectorAll('h1, h2, h3');
             headers.forEach((header, index) => {
                 const id = header.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-');
                 header.id = id;
@@ -190,8 +196,13 @@
                 const a = document.createElement('a');
                 a.href = `#${id}`;
                 a.textContent = header.textContent;
-                if (header.tagName === 'H3') {
+                if (header.tagName === 'H1') {
+                    a.style.fontWeight = 'bold';
+                }
+                if (header.tagName === 'H2') {
                     li.style.marginLeft = '1.5em';
+                } else if (header.tagName === 'H3') {
+                    li.style.marginLeft = '3em';
                 }
                 li.appendChild(a);
                 tocList.appendChild(li);

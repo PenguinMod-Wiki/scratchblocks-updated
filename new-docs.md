@@ -1,4 +1,10 @@
-`penguinblocks` is a fork of `scratchblocks`, adapted to the needs of PenguinMod. It has a new syntax, which we will document here as the fork progresses.
+`penguinblocks` is a fork of `scratchblocks`, adapted to the needs of PenguinMod. 
+
+It has a new syntax, which we will document here as the fork progresses.
+This documentation covers both the block code syntax and the JavaScript APIs in the library.
+
+# Block Code
+This section will explain everything related to the block code syntax.
 
 ## Inline Reporters
 Standard blocks can be used as inline elements within other blocks by wrapping them in curly braces. This is useful for creating complex nested structures that still read naturally.
@@ -56,3 +62,6 @@ say (hello [Gen1x])
 ```
 
 The example above defines a reporter custom block with a blue background. When the block is called later, it maintains that specific styling.
+
+# JavaScript API
+TODO, sorry :P

@@ -168,6 +168,12 @@ class InputView {
       boolean: SVG.pointedRect,
       stack: SVG.stackRect,
       reporter: SVG.roundedRect,
+
+      // PenguinMod custom shapes - default to reporter in Scratch 2.0
+      bumped: SVG.roundedRect,
+      indented: SVG.roundedRect,
+      scrapped: SVG.roundedRect,
+      arrow: SVG.roundedRect,
     }
   }
 
@@ -294,6 +300,12 @@ class BlockView {
       cat: SVG.hatRect,
       "define-hat": SVG.procHatRect,
       ring: SVG.roundedRect,
+
+      // PenguinMod custom shapes - default to reporter in Scratch 2.0
+      bumped: SVG.roundedRect,
+      indented: SVG.roundedRect,
+      scrapped: SVG.roundedRect,
+      arrow: SVG.roundedRect,
     }
   }
 

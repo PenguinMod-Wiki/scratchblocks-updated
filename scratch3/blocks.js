@@ -187,6 +187,120 @@ const ticketShape = (w, h, props) =>
     ],
   })
 
+const bumpedShape = (w, h, props) =>
+  SVG.path({
+    ...props,
+    path: [
+      "m 0,0",
+      "m 20,0",
+      "H", w - 20,
+      "h 6.666666666666667",
+      "a 1 1 0 0 1 0 20",
+      "a 1 1 0 0 1 0 20",
+      "h -6.666666666666667",
+      "H 20",
+      "h -6.666666666666667",
+      "a 1 1 0 0 1 0 -20",
+      "a 1 1 0 0 1 0 -20",
+      "h 6.666666666666667",
+      "z",
+    ],
+  })
+
+const indentedShape = (w, h, props) =>
+  SVG.path({
+    ...props,
+    path: [
+      "m 0,0",
+      "m 20,0",
+      "H", w - 20,
+      "h 20",
+      "l -20 20",
+      "l 20 20",
+      "h -20",
+      "H 20",
+      "h -20",
+      "l 20 -20",
+      "l -20 -20",
+      "h 20",
+      "z",
+    ],
+  })
+
+const scrappedShape = (w, h, props) =>
+  SVG.path({
+    ...props,
+    path: [
+      "m 0,0",
+      "m 20,0",
+      "H", w - 20,
+      "h 20",
+      "l -7.5 12.5",
+      "l -5 1.25",
+      "l 5 2.5",
+      "v 7.5",
+      "l -5 2.5",
+      "l 5 1.25",
+      "l 7.5 12.5",
+      "h -20",
+      "H 20",
+      "h -20",
+      "l 7.5 -12.5",
+      "l 5 -1.25",
+      "l -5 -2.5",
+      "v -7.5",
+      "l 5 -2.5",
+      "l -5 -1.25",
+      "l -7.5 -12.5",
+      "h 20",
+      "z",
+    ],
+  })
+
+const arrowShape = (w, h, props) =>
+  SVG.path({
+    ...props,
+    path: [
+      "m 0,0",
+      "m 20,0",
+      "H 85",
+      "c 0.07375 0 0.14687499999999998 0.00175 0.21975 0.0052499999999999995",
+      "c 0.8242499999999999 -0.0052499999999999995 2.216125 -0.0052499999999999995 4.1072500000000005 1.23325",
+      "l 16.330625 14.996125",
+      "c 0.16087500000000002 0.122375 0.315125 0.257125 0.46199999999999997 0.403875",
+      "c 0.555875 0.555875 0.93675 1.22025 1.142875 1.925125",
+      "l 0.05675 0.094375",
+      "l -0.015375 0.056499999999999995",
+      "c 0.094625 0.37124999999999997 0.141625 0.752125 0.14075000000000001 1.133",
+      "c 0.000875 0.380875 -0.046125 0.761625 -0.14075000000000001 1.132875",
+      "l 0.015375 0.056499999999999995",
+      "l -0.05675 0.094375",
+      "c -0.206125 0.70475 -0.5868749999999999 1.3692499999999999 -1.142875 1.925125",
+      "c -0.14687499999999998 0.14687499999999998 -0.30125 0.28150000000000003 -0.46199999999999997 0.403875",
+      "l -16.330625 14.996125",
+      "c -1.195125 1.212375 -3.830125 1.5434999999999999 -4.327 1.543625",
+      "H 20",
+      "h -15.308",
+      "c -0.771 0 -1.4969999999999999 -0.192875 -2.13225 -0.533125",
+      "l -0.09275 -0.049625",
+      "l -0.070875 -0.042624999999999996",
+      "c -0.55925 -0.330125 -1.041375 -0.7771250000000001 -1.4126250000000002 -1.3075",
+      "c -0.9016250000000001 -1.134875 -1.179625 -2.6025 -0.8342499999999999 -3.9427499999999998",
+      "l 0.02075 -0.077875",
+      "l 0.03 -0.10275",
+      "c 0.20875000000000002 -0.68975 0.5855 -1.3395000000000001 1.1308749999999999 -1.88475",
+      "l 13.29825 -12.211625",
+      "l -13.29825 -12.211625",
+      "c -0.54525 -0.54525 -0.9221250000000001 -1.194875 -1.1308749999999999 -1.88475",
+      "l -0.030625 -0.109625",
+      "l -0.020125 -0.07100000000000001",
+      "c -0.38637499999999997 -1.49925 0.0075 -3.1580000000000004 1.181375 -4.331875",
+      "c 1.108875 -1.108875 2.77125 -1.2385 4.081125 -1.2385",
+      "h 14.58825",
+      "z",
+    ],
+  })
+
 export class LabelView {
   constructor(label) {
     Object.assign(this, label)
@@ -408,6 +522,10 @@ export class InputView {
       leaf: leafShape,
       plus: plusShape,
       ticket: ticketShape,
+      bumped: bumpedShape,
+      indented: indentedShape,
+      scrapped: scrappedShape,
+      arrow: arrowShape,
     }
   }
 
@@ -438,7 +556,7 @@ export class InputView {
             ? customShape.padding.left
             : this.shape === "octagonal" || this.shape === "round"
               ? 16
-              : this.shape === "leaf" || this.shape === "plus" || this.shape === "ticket"
+              : this.shape === "leaf" || this.shape === "plus" || this.shape === "ticket" || this.shape === "bumped" || this.shape === "indented" || this.shape === "scrapped" || this.shape === "arrow"
                 ? 24
                 : 11
         const pr =
@@ -458,7 +576,7 @@ export class InputView {
             ? customShape.padding.left
             : this.shape === "octagonal" || this.shape === "round"
               ? 16
-              : this.shape === "leaf" || this.shape === "plus" || this.shape === "ticket"
+              : this.shape === "leaf" || this.shape === "plus" || this.shape === "ticket" || this.shape === "bumped" || this.shape === "indented" || this.shape === "scrapped" || this.shape === "arrow"
                 ? 24
                 : this.label.width >= 18
                   ? 11
@@ -663,6 +781,10 @@ class BlockView {
       leaf: leafShape,
       plus: plusShape,
       ticket: ticketShape,
+      bumped: bumpedShape,
+      indented: indentedShape,
+      scrapped: scrappedShape,
+      arrow: arrowShape,
     }
   }
 
@@ -736,6 +858,10 @@ class BlockView {
       leaf: [4, 4],
       plus: [4, 4],
       ticket: [4, 4],
+      bumped: [4, 4],
+      indented: [4, 4],
+      scrapped: [4, 4],
+      arrow: [4, 4],
       null: [4, 4],
     }
   }
@@ -762,7 +888,7 @@ class BlockView {
     if (shape === "octagonal" || shape === "round") {
       return 16
     }
-    if (shape === "leaf" || shape === "plus" || shape === "ticket") {
+    if (shape === "leaf" || shape === "plus" || shape === "ticket" || shape === "bumped" || shape === "indented" || shape === "scrapped" || shape === "arrow") {
       return 24
     }
 

@@ -35,6 +35,10 @@ export const overrideShapes = [
   "leaf",
   "plus",
   "ticket",
+  "bumped",
+  "indented",
+  "scrapped",
+  "arrow",
 ]
 
 // languages that should be displayed right to left
