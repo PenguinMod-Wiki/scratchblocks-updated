@@ -363,6 +363,23 @@ export class Block {
   }
 }
 
+export class Checkbox {
+  constructor(value) {
+    this.value = value
+    this.width = 40
+    this.height = 32
+    this.x = 0
+  }
+
+  get isCheckbox() {
+    return true
+  }
+
+  stringify() {
+    return `<${this.value} :: shadow>`
+  }
+}
+
 export class Comment {
   constructor(value, hasBlock) {
     this.label = new Label(value, "comment-label")
@@ -464,4 +481,3 @@ export class Document {
     this.scripts.forEach(script => script.translate(lang))
   }
 }
-

@@ -9,6 +9,7 @@ import {
   Icon,
   Input,
   Block,
+  Checkbox,
   Comment,
   Glow,
   Script,
@@ -702,6 +703,21 @@ function parseLines(code, languages, options) {
     if (children.length === 0) {
       return new Input("boolean")
     }
+
+    const lastChild = children[children.length - 1]
+    if (Array.isArray(lastChild) && lastChild.includes("shadow")) {
+      const textChildren = children.slice(0, -1)
+      const text = textChildren
+        .filter(c => c instanceof Label)
+        .map(c => c.value.trim())
+        .join("")
+        .trim()
+        .toLowerCase()
+      if (text === "true" || text === "false") {
+        return new Checkbox(text === "true")
+      }
+    }
+
     return makeBlock("boolean", children)
   }
 
@@ -1171,4 +1187,3 @@ export function parse(code, options) {
   recogniseStuff(scripts)
   return new Document(scripts)
 }
-

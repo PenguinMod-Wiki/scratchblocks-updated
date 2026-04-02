@@ -3,6 +3,7 @@ import {
   Icon,
   Input,
   Block,
+  Checkbox,
   Comment,
   Glow,
   Script,
@@ -1473,6 +1474,45 @@ class DocumentView {
   }
 }
 
+class CheckboxView {
+  constructor(node) {
+    this.value = node.value
+    this.width = 40
+    this.height = 32
+    this.x = 0
+  }
+
+  get isCheckbox() {
+    return true
+  }
+
+  measure() {}
+
+  draw(iconStyle, parent) {
+    const w = 40
+    const h = 32
+
+    const bg = SVG.pointedRect(w, h, {
+      fill: this.value ? "#33D833" : "rgba(0, 0, 0, 0.21)",
+      stroke: this.value ? "#389438" : "rgba(0, 0, 0, 0)",
+    })
+
+    const checkmarkD = this.value
+      ? "M -4.5 1.5 A 1 1 90 0 1 -2.5 -0.5 L -1.5 0.5 L 2.5 -3.5 A 1 1 0 0 1 4.5 -1.5 L -0.5 3.5 Q -1.5 4.5 -2.5 3.5 Z"
+      : "M -2.5 -4.5 A 1 1 0 0 0 -4.5 -2.5 L -2 0 L -4.5 2.5 A 1 1 0 0 0 -2.5 4.5 L 0 2 L 2.5 4.5 A 1 1 0 0 0 4.5 2.5 L 2 0 L 4.5 -2.5 A 1 1 0 0 0 2.5 -4.5 L 0 -2 Z"
+
+    const mark = SVG.el("path", {
+      d: checkmarkD,
+      transform: `translate(${w / 2} ${h / 2}) scale(1.5)`,
+      fill: "#fff",
+      opacity: this.value ? "1" : "0.5",
+    })
+
+    this.el = SVG.group([bg, mark])
+    return this.el
+  }
+}
+
 const viewFor = node => {
   switch (node.constructor) {
     case Label:
@@ -1483,6 +1523,8 @@ const viewFor = node => {
       return InputView
     case Block:
       return BlockView
+    case Checkbox:
+      return CheckboxView
     case Comment:
       return CommentView
     case Glow:
