@@ -126,6 +126,55 @@
     width: 95%;
   }
 }
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--container-bg);
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1000;
+  border: 1px solid var(--container-border);
+  border-radius: 4px;
+  top: 100%;
+  left: 0;
+  margin-top: 0;
+  padding-top: 0.25em;
+}
+
+.dropdown-content a {
+  color: var(--text-color);
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  background: none;
+  border-bottom: 1px solid var(--container-border);
+}
+
+.dropdown-content a:last-child {
+  border-bottom: none;
+}
+
+.dropdown-content a:hover {
+  background-color: var(--link-hover-bg);
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+#tools-link {
+  background: var(--link-bg);
+}
+
+#tools-link:hover {
+  background: var(--link-hover-bg);
+}
 </style>
 
 <!---------------------------------------------------------------------------->
@@ -135,6 +184,12 @@
   <span>
     <a target="_blank" href="https://wiki.scratch.mit.edu/wiki/Block_Plugin/Syntax">help</a>
     <a href="https://github.com/PenguinMod-Wiki/penguinblocks">github</a>
+    <div class="dropdown">
+      <a id="tools-link" href="#">tools ▼</a>
+      <div class="dropdown-content">
+        <a href="extension-to-blocks.html">extension → blocks (TODO)</a>
+      </div>
+    </div>
     <a id="open-settings" href="#">settings</a>
     <a href="new-docs.html"><b>new docs</b></a>
   </span>
