@@ -1176,13 +1176,6 @@ export default [
     category: "list",
   },
   {
-    id: "CONTROL_ELSEIF",
-    spec: "else if %1 then",
-    inputs: ["%b"],
-    shape: "celseif",
-    category: "control",
-  },
-  {
     id: "CONTROL_ELSE",
     spec: "else",
     inputs: [],

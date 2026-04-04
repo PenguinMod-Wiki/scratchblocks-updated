@@ -863,7 +863,7 @@ function parseScripts(getLine) {
           b.diff = null
         }
 
-        if (b.isElse || b.isElseIf || b.isEnd) {
+        if (b.isElse || b.isEnd) {
           b = new Block({ ...b.info, shape: "stack" }, b.children)
         }
 
@@ -912,14 +912,9 @@ function parseScripts(getLine) {
 
     if (b.hasScript) {
       while (true) {
+        const blocks = pMouth()
+        b.children.push(new Script(blocks))
         if (line && line.isElse) {
-          for (const child of line.children) {
-            b.children.push(child)
-          }
-          next()
-          continue
-        }
-        if (line && line.isElseIf) {
           for (const child of line.children) {
             b.children.push(child)
           }
@@ -931,14 +926,6 @@ function parseScripts(getLine) {
             b.info.forced = true
           }
           next()
-          break
-        }
-        
-        const blocks = pMouth()
-        b.children.push(new Script(blocks))
-        
-        if (!line || line.isElse || line.isElseIf || line.isEnd) {
-          continue
         }
         break
       }

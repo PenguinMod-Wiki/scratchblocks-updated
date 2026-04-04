@@ -192,7 +192,6 @@ export class Block {
     this.isRing = shape === "ring"
     this.hasScript = /block/.test(shape)
     this.isElse = shape === "celse"
-    this.isElseIf = shape === "celseif"
     this.isEnd = shape === "cend"
   }
   get isBlock() {
