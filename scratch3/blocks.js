@@ -341,10 +341,7 @@ export class LabelView {
   measure() {
     const value = this.value
     const cls = `sb3-${this.cls}`
-    this.el = SVG.text(0, 13.1, value, {
-      class: `sb3-label ${cls}`,
-    })
-
+    
     let cache = LabelView.metricsCache[cls]
     if (!cache) {
       cache = LabelView.metricsCache[cls] = Object.create(null)
@@ -357,13 +354,21 @@ export class LabelView {
       this.metrics = cache[value] = LabelView.measure(value, font)
       // TODO: word-spacing? (fortunately it seems to have no effect!)
     }
+    
+    this.el = SVG.text(0, this.height / 2, value, {
+      class: `sb3-label ${cls}`,
+      style: "dominant-baseline: middle;",
+    })
   }
 
   static measure(value, font) {
     const context = LabelView.measuring
     context.font = font
     const textMetrics = context.measureText(value)
-    return { width: textMetrics.width }
+    return { 
+      width: textMetrics.width,
+      height: textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent
+    }
   }
 }
 
