@@ -861,6 +861,7 @@ class BlockView {
       hat: [24, 8],
       cat: [24, 8],
       "define-hat": [20, 16],
+      "celse-if": [13, 0],
       octagonal: [4, 4],
       round: [4, 4],
       square: [4, 4],
@@ -991,7 +992,7 @@ class BlockView {
       if (lines.length === 0) {
         line.height += pt + pb
       } else {
-        line.height -= 11
+        line.height += pt + pb - 11
         line.y -= 2
       }
       y += line.height
