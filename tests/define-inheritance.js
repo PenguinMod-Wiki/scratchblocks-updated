@@ -8,6 +8,6 @@ test("custom block definition inheritance", () => {
   const arg = outline.children.find(c => c.isBlock && c.info.argument)
 
   expect(hat.info.color).toBe("#ff0000")
-  expect(outline.info.color).not.toBeNull() // It's a shade of #ff0000
+  expect(outline.info.color).not.toBeNull()
   expect(arg.info.color).toBe("#ff0000")
 })

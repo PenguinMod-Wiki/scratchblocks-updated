@@ -9,13 +9,13 @@ test("uri icon parsing", () => {
   expect(icon.name).toContain("data:image/png")
   expect(doc.stringify()).toContain("@(data:image/png")
 
-  const httpCode = "@(https://example.com/icon.png)"
+  const httpCode = "@(https://extensions.turbowarp.org/dango.png)"
   const httpDoc = parse(httpCode)
   const httpBlock = httpDoc.scripts[0].blocks[0]
   const httpIcon = httpBlock.children[0]
   expect(httpIcon.isIcon).toBe(true)
-  expect(httpIcon.name).toBe("https://example.com/icon.png")
-  expect(httpDoc.stringify()).toContain("@(https://example.com/icon.png)")
+  expect(httpIcon.name).toBe("https://extensions.turbowarp.org/dango.png")
+  expect(httpDoc.stringify()).toContain("@(https://extensions.turbowarp.org/dango.png)")
 })
 
 test("reporters with uri icons", () => {
