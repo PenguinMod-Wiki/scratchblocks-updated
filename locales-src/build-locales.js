@@ -83,7 +83,8 @@ const translateKey = (raw, key) => {
   const result = raw.mappings[key] || raw.extensionMappings[key]
   const englishResult = english.mappings[key] || english.extensionMappings[key]
   if (!englishResult) {
-    throw new Error(`Unknown key: '${key}'`)
+    console.warn(`Unknown key: '${key}'`)
+    return
   }
   if (!result) {
     return
