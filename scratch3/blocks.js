@@ -1222,7 +1222,7 @@ export class CommentView {
       SVG.commentRect(this.width, this.height, {
         class: "sb3-comment",
       }),
-      SVG.move(8, 4, labelEl),
+      SVG.move(8, -2, labelEl),
     ])
   }
 }

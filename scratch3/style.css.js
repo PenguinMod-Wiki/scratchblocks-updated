@@ -41,6 +41,8 @@ const commonOverride = `
   font: 400 12pt Helvetica Neue, Helvetica, sans-serif;
   fill: #000;
   word-spacing: 0;
+  dominant-baseline: middle;
+  alignment-baseline: middle;
 }`
 
 const createRule = (category, name, style) => `
