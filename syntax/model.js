@@ -69,6 +69,8 @@ export class Icon {
       addInput: true,
       delInput: true,
       list: true,
+      "+": true,
+      "-": true,
     }
   }
 
@@ -77,6 +79,23 @@ export class Icon {
       return `@(${this.name})`
     }
     return unicodeIcons[`@${this.name}`] || `@${this.name}`
+  }
+}
+
+export class Button {
+  constructor(name) {
+    this.name = name
+    this.width = 32
+    this.height = 32
+    this.x = 0
+  }
+
+  get isButton() {
+    return true
+  }
+
+  stringify() {
+    return `@${this.name}`
   }
 }
 

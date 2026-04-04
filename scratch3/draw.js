@@ -315,9 +315,14 @@ export default class SVG {
         p.push(SVG.getArm(w, y, shape))
       }
 
-      const hasNotch = !(isLast && isFinal)
+      const lastLineHasButton = isLast && lines[i + 1].children.some(child => child.isButton)
+      const hasNotch = !(isLast && isFinal) || lastLineHasButton
       const inset = isLast ? 0 : 16
-      y += lines[i + 1].height + 3
+      let h = lines[i + 1].height
+      if (lastLineHasButton) {
+        h += 16
+      }
+      y += h + 3
       p.push(SVG.getRightAndBottom(w, y, hasNotch, inset, shape))
     }
     p.push("Z")
@@ -344,4 +349,3 @@ export default class SVG {
     })
   }
 }
-

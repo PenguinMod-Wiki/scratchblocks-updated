@@ -10,6 +10,7 @@ import {
   Input,
   Block,
   Checkbox,
+  Button,
   Comment,
   Glow,
   Script,
@@ -495,6 +496,8 @@ function parseLines(code, languages, options) {
 
           if (name === "cloud") {
             children.push(new Label("☁"))
+          } else if (name === "+" || name === "-" || name === "plus" || name === "minus") {
+            children.push(new Button(name === "plus" ? "+" : name === "minus" ? "-" : name))
           } else {
             children.push(
               Object.prototype.hasOwnProperty.call(Icon.icons, name) ||
@@ -602,6 +605,9 @@ function parseLines(code, languages, options) {
     if (tok === "]") {
       next()
     }
+    if (s === "+" || s === "-") {
+      return new Button(s)
+    }
     if (hexColorPat.test(s)) {
       return new Input("color", s)
     }
@@ -708,7 +714,7 @@ function parseLines(code, languages, options) {
       next()
     }
     if (children.length === 0) {
-      return new Input("boolean")
+      return new Checkbox(false)
     }
 
     const lastChild = children[children.length - 1]
@@ -1131,8 +1137,17 @@ function recogniseStuff(scripts) {
           if (info.defineCustomPrimary) {
             block.info.defineCustomPrimary = info.defineCustomPrimary
           }
+          return // already done
         }
-        return
+      }
+
+      if (
+        block.isBlock &&
+        (block.info.id === "CONTROL_IF" || block.info.id === "CONTROL_IF_ELSE") &&
+        !block.children.some(child => child.isButton)
+      ) {
+        block.children.push(new Button("-"))
+        block.children.push(new Button("+"))
       }
 
       let name, info

@@ -4,6 +4,7 @@ import {
   Input,
   Block,
   Checkbox,
+  Button,
   Comment,
   Glow,
   Script,
@@ -770,7 +771,7 @@ class BlockView {
     return {
       stack: SVG.stackRect,
       "c-block": SVG.stackRect,
-      "if-block": SVG.stackRect,
+      "if-block": SVG.ifElseRect,
       celse: SVG.stackRect,
       cend: SVG.stackRect,
 
@@ -906,6 +907,8 @@ class BlockView {
         return this.hasScript ? 8 : 12 // text in circle: 3 units
       } else if (child.isDropdown) {
         return this.hasScript ? 8 : 12 // square in circle: 3 units
+      } else if (child.isButton) {
+        return this.hasScript ? 8 : 12
       } else if (child.isBoolean) {
         return this.hasScript ? 8 : 12 // hexagon in circle: 3 units
       } else if (child.isRound) {
@@ -918,6 +921,8 @@ class BlockView {
         return 20 // text in hexagon: 5 units
       } else if (child.isDropdown) {
         return 20 // square in hexagon: 5 units
+      } else if (child.isButton) {
+        return 20
       } else if (child.isRound && child.isBlock) {
         return 24 // circle in hexagon: 5 + 1 units
       } else if (child.isRound) {
@@ -1103,6 +1108,10 @@ class BlockView {
       padLeft += (innerWidth - originalInnerWidth) / 2
     }
 
+    const lastLine = lines[lines.length - 1]
+    if (lastLine && !lastLine.isScript && lastLine.children.some(child => child.isButton)) {
+      y += 16
+    }
     this.height = y
 
     this.width = scriptWidth
@@ -1138,9 +1147,14 @@ class BlockView {
           y += 3
         } else if (child.isIcon) {
           y += child.dy | 0
+        } else if (child.isButton && this.hasScript && i === lines.length - 1) {
+          y += 8
         }
 
         let x = padLeft + child.x
+        if (child.isButton && this.hasScript && i === lines.length - 1) {
+          x += innerWidth - padRight - line.width - padLeft
+        }
         if (child.dx) {
           x += child.dx
         }
@@ -1519,6 +1533,57 @@ class CheckboxView {
   }
 }
 
+class ButtonView {
+  constructor(node) {
+    this.name = node.name
+    this.width = 32
+    this.height = 32
+    this.x = 0
+  }
+
+  get isButton() {
+    return true
+  }
+
+  measure() {}
+
+  draw(iconStyle, parent) {
+    const w = 32
+    const h = 32
+
+    const bg = SVG.el("rect", {
+      x: 0,
+      y: 0,
+      rx: 4,
+      ry: 4,
+      width: w,
+      height: h,
+      fill: "rgba(0, 0, 0, 0)",
+      stroke: "rgba(0, 0, 0, 0.21)", // stroke="#00000035" is ~0.21 opacity
+    })
+
+    const plusIcon =
+      "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIj48ZyBzdHJva2Utd2lkdGg9IjAiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCI+PHBhdGggZD0iTTEuOTAzIDguNDRDLjg1MSA4LjQ0IDAgNy41MzYgMCA2LjQxOXYtLjgzN2MwLTEuMTE2Ljg1Mi0yLjAyMSAxLjkwMy0yLjAyMWgxLjY1NlYxLjkwM0MzLjU1OS44NTEgNC40NjUgMCA1LjU4MSAwaC44MzdjMS4xMTYgMCAyLjAyMS44NTIgMi4wMjEgMS45MDN2MS42NTZoMS42NTdjMS4wNTIgMCAxLjkwMy45MDYgMS45MDMgMi4wMjJ2LjgzN2MwIDEuMTE2LS44NTIgMi4wMjEtMS45MDMgMi4wMjFIOC40NDF2MS42NTdjMCAxLjA1Mi0uOTA2IDEuOTAzLTIuMDIyIDEuOTAzaC0uODM3Yy0xLjExNiAwLTIuMDIxLS44NTItMi4wMjEtMS45MDNWOC40NDF6IiBmaWxsLW9wYWNpdHk9Ii4xMDIiIGZpbGw9IiMyNDIwMjEiLz48cGF0aCBkPSJNMi4yMjggNy41OThBMS40MjcgMS40MjcgMCAwIDEgLjgwMSA2LjE3MVY1LjgzYTEuNDI3IDEuNDI3IDAgMCAxIDEuNDI3LTEuNDI3aDIuMTc0VjIuMjI4QTEuNDI3IDEuNDI3IDAgMCAxIDUuODI5LjgwMWguMzQxYTEuNDI3IDEuNDI3IDAgMCAxIDEuNDI3IDEuNDI3djIuMTc0aDIuMTc0YTEuNDI3IDEuNDI3IDAgMCAxIDEuNDI3IDEuNDI3di4zNDFhMS40MjcgMS40MjcgMCAwIDEtMS40MjcgMS40MjdINy41OTh2Mi4xNzRhMS40MjcgMS40MjcgMCAwIDEtMS40MjcgMS40MjdINS44M2ExLjQyNyAxLjQyNyAwIDAgMS0xLjQyNy0xLjQyN1Y3LjU5OHoiIGZpbGw9IiNmZmYiLz48L2c+PC9zdmc+"
+    const minusIcon =
+      "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSI0Ljg4IiB2aWV3Qm94PSIwIDAgMTIgNC44OCI+PGcgc3Ryb2tlLXdpZHRoPSIwIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiPjxwYXRoIGQ9Ik0xLjkwMyA0Ljg4Qy44NTEgNC44OCAwIDMuOTc2IDAgMi44NTl2LS44MzdDMCAuOTA1Ljg1MiAwIDEuOTAzIDBoOC4xOTNjMS4wNTIgMCAxLjkwMy45MDQgMS45MDMgMi4wMjF2LjgzN2MwIDEuMTE2LS44NTIgMi4wMjEtMS45MDMgMi4wMjF6IiBmaWxsLW9wYWNpdHk9Ii4xMDIiIGZpbGw9IiMyNDIwMjEiLz48cGF0aCBkPSJNMi4yMjggNC4wMzhBMS40MjcgMS40MjcgMCAwIDEgLjgwMSAyLjYxMVYyLjI3QTEuNDI3IDEuNDI3IDAgMCAxIDIuMjI4Ljg0M2g3LjU0NGExLjQyNyAxLjQyNyAwIDAgMSAxLjQyNyAxLjQyN3YuMzQxYTEuNDI3IDEuNDI3IDAgMCAxLTEuNDI3IDEuNDI3eiIgZmlsbD0iI2ZmZiIvPjwvZz48L3N2Zz4="
+
+    const icon = SVG.el("image", {
+      href: this.name === "+" ? plusIcon : minusIcon,
+      x: 5,
+      y: 5,
+      width: 21.333333333333332,
+      height: 21.333333333333332,
+    })
+
+    this.el = SVG.group([bg, icon])
+    SVG.setProps(this.el, {
+      "data-argument-type": "button",
+      class: "blocklyEditableText",
+    })
+    return this.el
+  }
+}
+
 const viewFor = node => {
   switch (node.constructor) {
     case Label:
@@ -1531,6 +1596,8 @@ const viewFor = node => {
       return BlockView
     case Checkbox:
       return CheckboxView
+    case Button:
+      return ButtonView
     case Comment:
       return CommentView
     case Glow:

@@ -258,13 +258,19 @@ export default class Style {
       ),
 
       SVG.el("path", {
-        d: "M0 0L4 4L0 8Z",
-        fill: "#111",
+        d: "M1 4h6M4 1v6",
+        stroke: "#111",
+        "stroke-width": "1.5",
+        "stroke-linecap": "round",
+        fill: "none",
         id: "sb3-addInput",
       }),
       SVG.el("path", {
-        d: "M4 0L4 8L0 4Z",
-        fill: "#111",
+        d: "M1 4h6",
+        stroke: "#111",
+        "stroke-width": "1.5",
+        "stroke-linecap": "round",
+        fill: "none",
         id: "sb3-delInput",
       }),
 

@@ -6,6 +6,7 @@ export {
   Input,
   Block,
   Checkbox,
+  Button,
   Comment,
   Glow,
   Script,
