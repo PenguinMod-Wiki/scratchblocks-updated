@@ -591,6 +591,7 @@ export default [
   },
   {
     id: "CONTROL_ELSEIF",
+    selector: "doIfElse",
     spec: "else if %1 then",
     inputs: ["%b"],
     shape: "celse-if",

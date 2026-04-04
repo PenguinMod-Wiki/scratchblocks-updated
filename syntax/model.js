@@ -190,7 +190,7 @@ export class Block {
     this.isBoolean = shape === "boolean"
 
     this.isRing = shape === "ring"
-    this.hasScript = /block/.test(shape)
+    this.hasScript = /block/.test(shape) || shape === "celse-if"
     this.isElse = shape === "celse" || shape === "celse-if"
     this.isElseIf = shape === "celse-if"
     this.isEnd = shape === "cend"
