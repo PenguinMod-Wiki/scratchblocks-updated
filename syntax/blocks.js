@@ -532,6 +532,8 @@ export function applyOverrides(info, overrides, options) {
     } else if (name === "reset") {
       info.categoryIsDefault = false
       info.isReset = true
+    } else if (name === "forced") {
+      info.forced = true
     } else {
       const mOpcode = name.match(/^@opcode\(([^)]*)\)$/)
       if (mOpcode) {

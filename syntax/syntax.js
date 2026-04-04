@@ -922,6 +922,9 @@ function parseScripts(getLine) {
           continue
         }
         if (line && line.isEnd) {
+          if (line.info && line.info.forced) {
+            b.info.forced = true
+          }
           next()
         }
         break
@@ -1144,7 +1147,8 @@ function recogniseStuff(scripts) {
       if (
         block.isBlock &&
         (block.info.id === "CONTROL_IF" || block.info.id === "CONTROL_IF_ELSE") &&
-        !block.children.some(child => child.isButton)
+        !block.children.some(child => child.isButton) &&
+        !block.info.forced
       ) {
         block.children.push(new Button("-"))
         block.children.push(new Button("+"))
