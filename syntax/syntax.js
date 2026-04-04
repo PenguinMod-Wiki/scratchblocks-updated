@@ -32,6 +32,7 @@ import {
   iconPat,
   blockName,
   blocksById,
+  detectBlockPattern,
 } from "./blocks.js"
 
 function paintBlock(info, children, languages, options) {
@@ -67,6 +68,43 @@ function paintBlock(info, children, languages, options) {
 
   let lang
   let type
+  
+  if (options.detect_blocks) {
+    const fullText = children.map(child => {
+      if (child.isLabel) return child.value
+      if (child.isIcon) return `@${child.name}`
+      if (child.isInput) {
+        if (child.shape === 'string') return `[${child.value}]`
+        if (child.shape === 'number') return `(${child.value})`
+        if (child.shape === 'boolean') return `<${child.value}>`
+        return child.value
+      }
+      return ''
+    }).join(' ')
+    
+    const detectedPattern = detectBlockPattern(fullText)
+    if (detectedPattern) {
+      const detectedWords = detectedPattern.split(" ")
+      const detectedChildren = []
+      
+      for (const word of detectedWords) {
+        if (word.startsWith("@")) {
+          detectedChildren.push(new Icon(word.slice(1)))
+        } else if (word.startsWith("%") && word.includes(".")) {
+          const parts = word.split(".")
+          detectedChildren.push(new Input(parts[0], parts[1] || ""))
+        } else if (word === "_") {
+          detectedChildren.push(new Input("string", ""))
+        } else {
+          detectedChildren.push(new Label(word))
+        }
+      }
+      
+      children = detectedChildren
+      const detectedString = detectedWords.join(" ")
+      info.hash = minifyHash(detectedString)
+    }
+  }
   if (!overrides.includes("reset")) {
     let o = null
     if (opcodeOverride && blocksById[opcodeOverride]) {
@@ -76,7 +114,7 @@ function paintBlock(info, children, languages, options) {
       }
     }
     if (!o) {
-      o = lookupHash(shortHash, info, children, languages)
+      o = lookupHash(info.hash, info, children, languages)
     }
 
     if (!o && !opcodeOverride) {
@@ -1185,6 +1223,7 @@ export function parse(code, options) {
   options = {
     inline: false,
     languages: ["en"],
+    detect_blocks: null,
     ...options,
   }
 

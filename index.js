@@ -17,6 +17,7 @@ import {
   Comment,
   Script,
   Document,
+  addBlockDetection,
 } from "./syntax/index.js"
 import * as scratch2 from "./scratch2/index.js"
 import * as scratch3 from "./scratch3/index.js"
@@ -164,6 +165,22 @@ export default function (window) {
     renderMatching: renderMatching,
 
     appendStyles: appendStyles,
+    addBlockDetection: addBlockDetection,
   }
+}
+
+// export funcs so node can use em
+export {
+  parse,
+  allLanguages,
+  loadLanguages,
+  Label,
+  Icon,
+  Input,
+  Block,
+  Comment,
+  Script,
+  Document,
+  addBlockDetection,
 }
 

@@ -13,6 +13,6 @@ export {
   Document,
 } from "./model.js"
 
-export { allLanguages, loadLanguages } from "./blocks.js"
+export { allLanguages, loadLanguages, addBlockDetection } from "./blocks.js"
 
 export { extensions, movedExtensions, aliasExtensions } from "./extensions.js"

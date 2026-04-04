@@ -129,6 +129,21 @@ export function minifyHash(hash) {
 }
 
 export const blocksById = {}
+const blockDetectionMap = new Map()
+
+export function addBlockDetection(shortPattern, longPattern) {
+  blockDetectionMap.set(shortPattern.trim().toLowerCase(), longPattern.trim())
+}
+
+export function detectBlockPattern(text) {
+  const normalizedText = text.trim().toLowerCase()
+  for (const [shortPattern, longPattern] of blockDetectionMap) {
+    if (normalizedText.includes(shortPattern)) {
+      return longPattern
+    }
+  }
+  return null
+}
 const allBlocks = scratchCommands.map(def => {
   if (!def.id) {
     if (!def.selector) {
