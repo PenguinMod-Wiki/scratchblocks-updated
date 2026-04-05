@@ -21,7 +21,7 @@ class Renderer {
 
   async start() {
     const app = express()
-    app.use(express.static("."))
+    app.use(express.static(path.resolve(".")))
     await new Promise(resolve => {
       this.server = app.listen(8002, resolve)
     })
@@ -38,7 +38,11 @@ class Renderer {
     await this.page.goto(
       "http://localhost:8002/snapshots/snapshot-testing.html",
     )
-    await this.page.waitForFunction("window.penguinblocksLoaded")
+    this.page.on("requestfailed", request => {
+      console.error(
+      `Request failed: ${request.url()} - ${request.failure().errorText}`
+      )
+    })
   }
 
   async snapshot(script, options) {
