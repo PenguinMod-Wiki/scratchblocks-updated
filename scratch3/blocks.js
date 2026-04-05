@@ -827,7 +827,7 @@ class BlockView {
       "c-block": SVG.stackRect,
       "if-block": SVG.ifElseRect,
       celse: SVG.stackRect,
-      "celse-if": SVG.stackRect,
+      "celse-if": SVG.ifElseRect,
       cend: SVG.stackRect,
 
       cap: SVG.capRect,
@@ -1056,7 +1056,8 @@ class BlockView {
         if (
           this.info.shape === "if-block" ||
           this.info.shape === "celse" ||
-          this.info.shape === "celse-if"
+          this.info.shape === "celse-if" ||
+          line.children.some(child => !child.isLabel && !child.isIcon)
         ) {
           line.height += pt + pb
         } else if (this.isReporter || this.isBoolean) {

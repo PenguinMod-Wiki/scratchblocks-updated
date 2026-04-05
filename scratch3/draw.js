@@ -340,6 +340,10 @@ export default class SVG {
     return SVG.path({ ...props, path: p })
   }
 
+  static ifElseRect(...args) {
+    return SVG.mouthRect(...args)
+  }
+
   static commentRect(w, h, props) {
     return SVG.roundRect(w, h, { ...props, class: "sb3-comment" })
   }
