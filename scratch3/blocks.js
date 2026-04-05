@@ -1208,14 +1208,7 @@ class BlockView {
     }
 
     const lastLine = lines[lines.length - 1]
-    if (
-      this.hasScript &&
-      lastLine &&
-      !lastLine.isScript &&
-      lastLine.children.some(child => child.isButton)
-    ) {
-      y += 16
-    }
+
     this.height = y
 
     this.width = scriptWidth
@@ -1251,8 +1244,6 @@ class BlockView {
           y += 3
         } else if (child.isIcon) {
           y += child.dy | 0
-        } else if (child.isButton && this.hasScript && i === lines.length - 1) {
-          y += 8
         }
 
         let x = padLeft + child.x

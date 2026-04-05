@@ -329,10 +329,7 @@ export default class SVG {
       const hasNotch =
         (!(isLast && isFinal) || lastLineHasButton) && !isReporter
       const inset = isLast ? 0 : 16
-      let h = lines[i + 1].height
-      if (lastLineHasButton) {
-        h += 16
-      }
+      const h = lines[i + 1].height
       y += h + (isReporter ? 0 : 3)
       p.push(SVG.getRightAndBottom(w, y, hasNotch, inset, shape))
     }
