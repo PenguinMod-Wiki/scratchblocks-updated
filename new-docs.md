@@ -116,6 +116,7 @@ define hi!
 return [value]
 ```
 ```blocks
+define hi!
 return [value]
 ```
 
