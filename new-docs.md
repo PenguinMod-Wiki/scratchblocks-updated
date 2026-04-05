@@ -1,3 +1,4 @@
+# What's this about?
 `penguinblocks` is a fork of `scratchblocks`, adapted to the needs of PenguinMod. 
 
 It has a new syntax, which we will document here as the fork progresses.
