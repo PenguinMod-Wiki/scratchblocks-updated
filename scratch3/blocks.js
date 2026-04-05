@@ -1429,7 +1429,7 @@ class ScriptView {
       this.height = 32
     }
     if (!inside && !this.isFinal) {
-      this.height += lastBlock ? lastBlock.hasPuzzle ? 8 : 0 : 8
+      this.height += lastBlock ? (lastBlock.hasPuzzle ? 8 : 0) : 8
     }
     if (!inside && lastBlock && lastBlock.isGlow) {
       this.height += 7 // TODO unbreak this

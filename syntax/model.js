@@ -481,11 +481,11 @@ export class Script {
         return line
       })
       .join("\n")
-    
+
     if (this.isEmpty && this.isEmbedded) {
       return "{}"
     }
-    
+
     return content
   }
 
