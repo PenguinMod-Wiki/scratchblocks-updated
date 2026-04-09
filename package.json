@@ -19,14 +19,14 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "NODE_NO_WARNINGS=1 rollup -c --environment buildTarget:PROD",
-    "fmt": "NODE_NO_WARNINGS=1 prettier --cache --write *.js syntax/*.js scratch3/*.js locales-src/*.js snapshots/*.js snapshots/*.html tests/*.js",
-    "lint:staged": "NODE_NO_WARNINGS=1 lint-staged",
-    "lint": "NODE_NO_WARNINGS=1 eslint *.js syntax/*.js scratch3/*.js locales-src/*.js snapshots/*.js tests/*.js",
-    "locales": "NODE_NO_WARNINGS=1 node locales-src/build-locales.js",
-    "rollup": "NODE_NO_WARNINGS=1 rollup -c",
-    "snapshots": "NODE_NO_WARNINGS=1 node ./snapshots/index.js",
-    "start": "NODE_NO_WARNINGS=1 rollup -c -m -w",
+    "build": "rollup -c --environment buildTarget:PROD",
+    "fmt": "prettier --cache --write *.js syntax/*.js scratch3/*.js locales-src/*.js snapshots/*.js snapshots/*.html tests/*.js",
+    "lint:staged": "lint-staged",
+    "lint": "eslint *.js syntax/*.js scratch3/*.js locales-src/*.js snapshots/*.js tests/*.js",
+    "locales": "node locales-src/build-locales.js",
+    "rollup": "rollup -c",
+    "snapshots": "node ./snapshots/index.js",
+    "start": "rollup -c -m -w",
     "test": "cross-env NODE_NO_WARNINGS=1 NODE_OPTIONS=--experimental-vm-modules jest --verbose=false"
   },
   "devDependencies": {

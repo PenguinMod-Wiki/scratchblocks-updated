@@ -124,8 +124,9 @@ ticket shape block::ticket
 square input [text]::square
 ```
 
-## Automatic Cap Blocks
-Any block that starts with the word "return" (case-insensitive) will automatically be rendered as a cap block, just like in PenguinMod!
+## New PM Block Detection
+This fork will also add several blocks from PenguinMod that will be detected automatically.
+As an example, any block that starts with the word "return" (case-insensitive) will now be automatically be rendered as a cap block, just like the one in PenguinMod!
 
 Example:
 ```
@@ -135,6 +136,28 @@ return [value]
 ```blocks
 define hi!
 return [value]
+```
+
+## Plus and Minus icons
+The Plus and Minus icons from PenguinMod can be summoned using `[+]`, `[-]`, `@plus`, or `@minus`. They natively support C-blocks and are automatically added to `if` blocks.
+
+Examples:
+```
+hi i have @plus and @minus :: extension
+```
+```blocks
+hi i have @plus and @minus :: extension
+```
+
+```
+C-Block {
+hello world
+} @plus @minus :: control
+```
+```blocks
+C-Block {
+hello world
+} @plus @minus :: control
 ```
 
 # JavaScript API
