@@ -5,6 +5,11 @@
 It introduces a new syntax, which will be documented here as the fork progresses.
 This documentation covers both the block code syntax and the JavaScript APIs provided by the library.
 
+## Fork Notice
+This fork is not affiliated with the original `scratchblocks` library. It is a separate project with its own syntax and features.
+
+This fork was made specifically from `scratchblocks`'s v3.6.4. Almost all features from the original library up until that version are preserved, with the exception of 2.0 support.
+
 ## 2.0 Deprecation
 `penguinblocks` is focused on adding PenguinMod-specific features. Since PenguinMod does not use Scratch 2.0, there is no reason to keep 2.0 support. We do not plan to backport any `penguinblocks` features to 2.0.
 
