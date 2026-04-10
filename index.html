@@ -22,6 +22,20 @@
   .CodeMirror {
     height: 100%;
   }
+
+  .zoom-hint {
+    font-size: 0.8em;
+    margin-left: 1.5em;
+    color: var(--cm-comment);
+  }
+
+  @media screen and (max-width: 480px) {
+    .zoom-hint {
+      display: block;
+      margin-left: 0;
+      margin-top: 0.5em;
+    }
+  }
 </style>
 
 <style>
@@ -671,10 +685,8 @@
       
       var zoomHint = document.createElement('span');
       zoomHint.className = 'zoom-hint';
-      zoomHint.textContent = '(you can also use the scroll wheel)';
-      zoomHint.style.fontSize = '0.8em';
-      zoomHint.style.marginLeft = '1.5em';
-      zoomHint.style.color = 'var(--cm-comment)';
+      var isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      zoomHint.textContent = isTouch ? '(you can pinch the screen to zoom)' : '(you can also use the scroll wheel)';
       
       zoomControls.appendChild(zoomOutBtn);
       zoomControls.appendChild(zoomLabel);
@@ -705,6 +717,35 @@
     updateZoomLabel();
     objUpdated();
   });
+
+  var lastPinchDist = 0;
+  document.getElementById('preview').addEventListener('touchstart', function (e) {
+    if (e.touches.length === 2) {
+      lastPinchDist = Math.hypot(
+        e.touches[0].pageX - e.touches[1].pageX,
+        e.touches[0].pageY - e.touches[1].pageY
+      );
+    }
+  }, { passive: false });
+
+  document.getElementById('preview').addEventListener('touchmove', function (e) {
+    if (e.touches.length === 2) {
+      var dist = Math.hypot(
+        e.touches[0].pageX - e.touches[1].pageX,
+        e.touches[0].pageY - e.touches[1].pageY
+      );
+      
+      var diff = dist - lastPinchDist;
+      if (Math.abs(diff) > 2) {
+        zoomScale = Math.max(0.1, Math.min(5, zoomScale + (diff * 0.005)));
+        localStorage.setItem('penguinblocks-zoom', zoomScale.toString());
+        updateZoomLabel();
+        objUpdated();
+        lastPinchDist = dist;
+      }
+      e.preventDefault();
+    }
+  }, { passive: false });
 
   document.getElementById('preview').addEventListener('wheel', function (e) {
     if (e.deltaY < 0) {
