@@ -35,7 +35,7 @@ export const penguinModBlocks = [
     shape: "cap",
     category: "control",
   },
-];
+]
 
 export const penguinModTranslations = {
   en: {
@@ -45,13 +45,13 @@ export const penguinModTranslations = {
     "penguinmod:break": "break",
     "penguinmod:continue": "continue",
   },
-};
+}
 
 export function isReturnCapBlock(children) {
-  const firstChild = children[0];
+  const firstChild = children[0]
   return (
     firstChild &&
     firstChild.isLabel &&
     firstChild.value.toLowerCase().startsWith("return")
-  );
+  )
 }
