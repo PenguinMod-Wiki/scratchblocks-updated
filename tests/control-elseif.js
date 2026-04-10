@@ -1,4 +1,7 @@
-import { parse } from "../index.js"
+import { parse, loadLanguages } from "../index.js"
+import es from "../locales/es.json"
+
+loadLanguages({ es })
 
 test("control else if then block", () => {
   const code = "else if <true> then"

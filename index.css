@@ -321,6 +321,14 @@ button:active, button.pressed, .button:active, .button.pressed {
 .cm-s-grey { color: var(--cm-grey); }
 .cm-s-obsolete { color: var(--cm-obsolete); }
 
+.suggestion-ghost {
+  color: var(--cm-comment);
+  opacity: 0.6;
+  font-style: italic;
+  pointer-events: none;
+  user-select: none;
+}
+
 #lang-status {
   font-size: 0.6rem;
   line-height: 1em;

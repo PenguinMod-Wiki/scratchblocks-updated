@@ -18,6 +18,7 @@ import {
   Script,
   Document,
   addBlockDetection,
+  blocksById,
 } from "./syntax/index.js"
 
 import * as scratch3 from "./scratch3/index.js"
@@ -161,6 +162,7 @@ function penguinblocks(window) {
 
     appendStyles: appendStyles,
     addBlockDetection: addBlockDetection,
+    blocksById: blocksById,
   }
 }
 
@@ -176,6 +178,7 @@ Object.assign(penguinblocks, {
   Script,
   Document,
   addBlockDetection,
+  blocksById,
 })
 
 const scratchblocks = penguinblocks
@@ -195,4 +198,5 @@ export {
   Script,
   Document,
   addBlockDetection,
+  blocksById,
 }

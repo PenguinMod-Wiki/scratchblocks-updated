@@ -35,6 +35,8 @@ import {
   detectBlockPattern,
 } from "./blocks.js"
 
+import { isReturnCapBlock } from "./penguinmod.js"
+
 function paintBlock(info, children, languages, options) {
   let defineHatPrimaryHex = null
   let overrides = []
@@ -162,12 +164,7 @@ function paintBlock(info, children, languages, options) {
         children = [new Label(". . .")]
       }
     } else {
-      const firstChild = children[0]
-      if (
-        firstChild &&
-        firstChild.isLabel &&
-        firstChild.value.toLowerCase().startsWith("return")
-      ) {
+      if (isReturnCapBlock(children)) {
         info.shape = "cap"
         info.category = "custom"
         info.categoryIsDefault = false

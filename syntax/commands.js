@@ -590,14 +590,6 @@ export default [
     category: "control",
   },
   {
-    id: "CONTROL_ELSEIF",
-    selector: "doIfElse",
-    spec: "else if %1 then",
-    inputs: ["%b"],
-    shape: "celse-if",
-    category: "control",
-  },
-  {
     id: "CONTROL_WAITUNTIL",
     selector: "doWaitUntil",
     spec: "wait until %1",

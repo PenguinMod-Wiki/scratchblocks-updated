@@ -304,3 +304,42 @@ When authoring block code, simply append `::myCategory` to map the block to your
 ```
 new block for this extension :: myCategory
 ```
+
+## Block Metadata (`blocksById`)
+`penguinblocks` maintains a registry of all known blocks and their metadata. This registry is available via `penguinblocks.blocksById`.
+
+### Structure
+`blocksById` is an object where each key is a block ID (e.g., `MOTION_MOVESTEPS`) and the value is a metadata object.
+
+```javascript
+const moveSteps = penguinblocks.blocksById['MOTION_MOVESTEPS'];
+console.log(moveSteps);
+/*
+{
+  "id": "MOTION_MOVESTEPS",
+  "spec": "move %1 steps",
+  "parts": [
+    "move",
+    "%1",
+    "steps"
+  ],
+  "selector": "forward:",
+  "inputs": [
+    "%n"
+  ],
+  "shape": "stack",
+  "category": "motion",
+  "hasLoopArrow": false
+}
+*/
+```
+
+### Properties
+* `id` (string): The unique identifier for the block.
+* `spec` (string): The default English syntax for the block.
+* `parts` (Array<string>): The spec split into labels and input placeholders.
+* `selector` (string): The internal Scratch 2.0 selector or a generated ID.
+* `inputs` (Array<string>): An array of input types (e.g., `%n` for number, `%s` for string, `%b` for boolean).
+* `shape` (string): The block shape (e.g., `stack`, `hat`, `reporter`, `boolean`, `cap`).
+* `category` (string): The default category/color for the block.
+* `hasLoopArrow` (boolean): Whether the block displays a loop arrow at the bottom (for C-blocks).

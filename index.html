@@ -346,96 +346,228 @@
     reader.readAsDataURL(file);
   });
 
-  var keywordToCategory = {};
-  var categoryNames = new Set([
-    "motion", "looks", "sound", "pen", "events", "control", "sensing",
-    "operators", "variables", "list", "custom", "extension", "grey", "obsolete"
-  ]);
-
-  function rebuildKeywordMap() {
-    keywordToCategory = {};
-    Object.keys(penguinblocks.allLanguages).forEach(langCode => {
-      var lang = penguinblocks.allLanguages[langCode];
-      if (!lang.blocksByHash) return;
-      for (var hash in lang.blocksByHash) {
-        var blocks = lang.blocksByHash[hash];
-        if (!blocks || blocks.length === 0) continue;
-        var category = blocks[0].category;
-        if (!category) continue;
-        categoryNames.add(category);
-
-        var words = hash.split(/[ _%@()\[\]{}|]+/);
-        words.forEach(word => {
-          if (word.length > 1) {
-            var w = word.toLowerCase();
-            if (!keywordToCategory[w]) {
-              keywordToCategory[w] = category;
-            }
-          }
-        });
-      }
-      if (lang.definePrefix) {
-        lang.definePrefix.forEach(p => {
-          keywordToCategory[p.toLowerCase()] = "custom";
-        });
-      }
+  var lineCache = new Map();
+  function getLineData(text) {
+    if (lineCache.has(text)) return lineCache.get(text);
+    
+    var doc = penguinblocks.parse(text, {
+      languages: obj.lang ? ['en', obj.lang] : ['en'],
+      icons: customIcons,
     });
+    
+    var tokens = [];
+    if (doc.scripts.length > 0) {
+      var script = doc.scripts[0];
+      
+      function collectTokens(x) {
+        if (x.isBlock) {
+          var category = x.info.category || "obsolete";
+          x.children.forEach(child => {
+            if (child.isLabel) {
+              tokens.push({
+                text: child.value,
+                style: "s-" + category
+              });
+            } else if (child.isIcon) {
+              tokens.push({
+                text: "@" + child.name,
+                style: "variable-2"
+              });
+            } else if (child.isInput) {
+              var style = "string";
+              if (child.shape === "number" || child.shape === "number-dropdown") style = "number";
+              if (child.shape === "boolean") style = "bracket";
+              
+              tokens.push({
+                text: child.value,
+                style: style,
+                isInput: true,
+                shape: child.shape
+              });
+            } else if (child.isBlock) {
+              collectTokens(child);
+            }
+          });
+          if (x.comment) {
+            tokens.push({
+              text: "// " + x.comment.label.value,
+              style: "s-comment"
+            });
+          }
+        } else if (x.isScript) {
+          x.blocks.forEach(collectTokens);
+        } else if (x.isComment) {
+          tokens.push({
+            text: "// " + x.label.value,
+            style: "s-comment"
+          });
+        }
+      }
+      collectTokens(script);
+    }
+    
+    lineCache.set(text, tokens);
+    return tokens;
   }
 
   CodeMirror.defineMode("scratchblocks", function () {
-    rebuildKeywordMap();
     return {
-      token: function (stream) {
+      startState: function() {
+        return {
+          tokenizeIdx: 0,
+          lastLine: null
+        };
+      },
+      token: function (stream, state) {
+        if (stream.sol()) {
+          state.tokenizeIdx = 0;
+          state.lastLine = stream.string;
+        }
+        
+        var tokens = getLineData(state.lastLine);
+        
         if (stream.eatSpace()) return null;
 
-        if (stream.match("//")) {
-          stream.skipToEnd();
-          return "comment";
+        if (state.tokenizeIdx >= tokens.length) {
+          if (stream.match(/^::/)) return "keyword";
+          var m = stream.match(/^[a-zA-Z0-9\u00C0-\u017F]+/);
+          if (m) return "variable";
+          stream.next();
+          return null;
         }
 
-        if (stream.match(/^::/)) {
+        var token = tokens[state.tokenizeIdx];
+        
+        if (token.style === "s-comment") {
+          if (stream.match("//")) {
+             stream.skipToEnd();
+             state.tokenizeIdx++;
+             return "s-comment";
+          }
+        }
+        
+        if (stream.peek() === ":" && stream.match(/^::/)) {
           return "keyword";
         }
 
-        if (stream.match(/^\[[^\]]*\]/)) return "string";
-
-        if (stream.match(/^\([^\)]*\)/)) return "number";
-
-        if (stream.match(/^#(?:[0-9a-fA-F]{3}){1,2}/)) return "number";
-
-        if (stream.match(/^@[a-zA-Z0-9_-]+/)) return "variable-2";
-        if (stream.match(/^@\([^)]*\)/)) return "variable-2";
-
-        if (stream.match(/^{|}/)) return "bracket";
-
-        var m = stream.match(/^[a-zA-Z\u00C0-\u017F]+/);
-        if (m) {
-          var word = m[0].toLowerCase();
-
-          var line = stream.string.slice(stream.pos);
-          var overrideMatch = line.match(/::\s*([a-zA-Z0-9_-]+)/);
-          if (overrideMatch) {
-            var override = overrideMatch[1].toLowerCase();
-            if (categoryNames.has(override)) {
-              return "s-" + override;
-            }
-          }
-
-          if (categoryNames.has(word)) {
-            return "s-" + word;
-          }
-
-          if (keywordToCategory[word]) {
-            return "s-" + keywordToCategory[word];
-          }
-          return "variable";
+        var textToMatch = token.text;
+        if (token.isInput) {
+           if (token.shape === "number" || token.shape === "number-dropdown") {
+             if (stream.eat("(")) {
+               return "number";
+             }
+             if (stream.match(textToMatch)) {
+               if (token.shape === "number-dropdown") {
+                  stream.eatSpace();
+                  stream.eat("v");
+               }
+               if (stream.eat(")")) {
+                  state.tokenizeIdx++;
+               }
+               return "number";
+             }
+           }
+           if (token.shape === "string" || token.shape === "color") {
+             if (stream.eat("[")) return "string";
+             if (stream.match(textToMatch)) {
+                if (stream.eat("]")) state.tokenizeIdx++;
+                return "string";
+             }
+           }
         }
 
+        if (stream.match(textToMatch)) {
+          state.tokenizeIdx++;
+          return token.style;
+        }
+
+        var m = stream.match(/^[a-zA-Z0-9\u00C0-\u017F]+/);
+        if (m) return "variable";
         stream.next();
         return null;
       }
     };
   });
+
+  var currentSuggestion = {
+    text: "",
+    widget: null,
+    line: -1
+  };
+
+  function updateSuggestion() {
+    if (currentSuggestion.widget) {
+      currentSuggestion.widget.clear();
+      currentSuggestion.widget = null;
+    }
+    currentSuggestion.text = "";
+    currentSuggestion.line = -1;
+
+    var cursor = editor.getCursor();
+    var lineText = editor.getLine(cursor.line);
+    var trimText = lineText.trimStart();
+    
+    if (trimText.length < 3 || cursor.ch < lineText.length) return;
+
+    var langCode = obj.lang || "en";
+    var lang = penguinblocks.allLanguages[langCode];
+    if (!lang || !lang.commands) return;
+
+    var match = null;
+    var matchId = null;
+    var lowerTrim = trimText.toLowerCase();
+
+    for (var id in lang.commands) {
+      var spec = lang.commands[id];
+      if (spec === "when @blueFlag clicked") spec = "when flag clicked";
+      if (spec.toLowerCase().startsWith(lowerTrim) && spec.length > trimText.length) {
+        match = spec;
+        matchId = id;
+        break;
+      }
+    }
+
+    function formatSpec(spec, id) {
+      var info = penguinblocks.blocksById[id];
+      var formatted = spec;
+      
+      formatted = formatted
+        .replace(/%[nsd]/g, "()")
+        .replace(/%[smc]/g, "[]")
+        .replace(/%b/g, "<>");
+
+      if (info && info.inputs) {
+        info.inputs.forEach((inputType, index) => {
+          var placeholder = "%" + (index + 1);
+          var indicator = "[]";
+          if (inputType === "%n" || inputType === "%d") indicator = "()";
+          else if (inputType === "%b") indicator = "<>";
+          
+          formatted = formatted.replace(placeholder, indicator);
+        });
+      }
+      
+      formatted = formatted.replace(/%[0-9]+/g, "[]");
+      
+      return formatted;
+    }
+
+    if (match) {
+      var formattedMatch = formatSpec(match, matchId);
+      var suggestionText = formattedMatch.slice(trimText.length);
+      
+      currentSuggestion.text = formattedMatch;
+      currentSuggestion.line = cursor.line;
+
+      var span = document.createElement("span");
+      span.className = "suggestion-ghost";
+      span.textContent = suggestionText;
+      currentSuggestion.widget = editor.setBookmark(
+        {line: cursor.line, ch: lineText.length},
+        {widget: span}
+      );
+    }
+  }
 
   var obj = { script: "", lang: "" };
   extractHash();
@@ -444,7 +576,27 @@
     mode: "scratchblocks",
     lineNumbers: true,
     lineWrapping: true,
-    theme: "default"
+    theme: "default",
+    extraKeys: {
+      "Tab": function(cm) {
+        if (currentSuggestion.text) {
+          var line = currentSuggestion.line;
+          var oldText = cm.getLine(line);
+          var indent = oldText.match(/^\s*/)[0];
+          cm.replaceRange(indent + currentSuggestion.text, {line: line, ch: 0}, {line: line, ch: oldText.length});
+          return;
+        }
+        return CodeMirror.Pass;
+      }
+    }
+  });
+
+  editor.on('cursorActivity', updateSuggestion);
+  editor.on('blur', function() {
+    if (currentSuggestion.widget) {
+      currentSuggestion.widget.clear();
+      currentSuggestion.widget = null;
+    }
   });
 
   var exportSVGLink;

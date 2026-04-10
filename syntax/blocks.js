@@ -44,8 +44,8 @@ export const overrideShapes = [
 // languages that should be displayed right to left
 export const rtlLanguages = ["ar", "ckb", "fa", "he"]
 
-// List of commands taken from Scratch
 import scratchCommands from "./commands.js"
+import { penguinModBlocks, penguinModTranslations } from "./penguinmod.js"
 
 const inputNumberPat = /%([0-9]+)/
 export const inputPat = /(%[a-zA-Z0-9](?:\.[a-zA-Z0-9]+)?)/
@@ -144,7 +144,7 @@ export function detectBlockPattern(text) {
   }
   return null
 }
-const allBlocks = scratchCommands.map(def => {
+const allBlocks = [...scratchCommands, ...penguinModBlocks].map(def => {
   if (!def.id) {
     if (!def.selector) {
       throw new Error(`Missing ID: ${def.spec}`)
@@ -183,6 +183,10 @@ export const unicodeIcons = {
 
 export const allLanguages = {}
 function loadLanguage(code, language) {
+  if (penguinModTranslations[code]) {
+    Object.assign(language.commands, penguinModTranslations[code])
+  }
+
   const blocksByHash = (language.blocksByHash = {})
 
   Object.keys(language.commands).forEach(blockId => {
